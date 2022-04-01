@@ -1,0 +1,28 @@
+{
+    "version": 1,
+    "minor_version": 1,
+    "key": "core.restore_state",
+    "data": [
+        {
+            "state": {
+                "entity_id": "person.vlb",
+                "state": "unknown",
+                "attributes": {
+                    "editable": false,
+                    "id": "vlb",
+                    "user_id": "7e27048212fd43d78e900bed6f4ac44c",
+                    "friendly_name": "vlb"
+                },
+                "last_changed": "2022-04-01T10:41:26.492401+00:00",
+                "last_updated": "2022-04-01T10:41:30.405583+00:00",
+                "context": {
+                    "id": "4916b780086bb9d8250804141e852b6f",
+                    "parent_id": null,
+                    "user_id": null
+                }
+            },
+            "extra_data": null,
+            "last_seen": "2022-04-01T10:56:55.367958+00:00"
+        }
+    ]
+}

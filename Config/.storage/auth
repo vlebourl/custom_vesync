@@ -1,0 +1,122 @@
+{
+    "version": 1,
+    "minor_version": 1,
+    "key": "auth",
+    "data": {
+        "users": [
+            {
+                "id": "563d33967d924c588c6ecbff5eb96ed8",
+                "group_ids": [
+                    "system-read-only"
+                ],
+                "is_owner": false,
+                "is_active": true,
+                "name": "Home Assistant Content",
+                "system_generated": true,
+                "local_only": false
+            },
+            {
+                "id": "7e27048212fd43d78e900bed6f4ac44c",
+                "group_ids": [
+                    "system-admin"
+                ],
+                "is_owner": true,
+                "is_active": true,
+                "name": "vlb",
+                "system_generated": false,
+                "local_only": false
+            }
+        ],
+        "groups": [
+            {
+                "id": "system-admin",
+                "name": "Administrators"
+            },
+            {
+                "id": "system-users",
+                "name": "Users"
+            },
+            {
+                "id": "system-read-only",
+                "name": "Read Only"
+            }
+        ],
+        "credentials": [
+            {
+                "id": "9beb9518028c4616948324f9e7e2d071",
+                "user_id": "7e27048212fd43d78e900bed6f4ac44c",
+                "auth_provider_type": "homeassistant",
+                "auth_provider_id": null,
+                "data": {
+                    "username": "vlb"
+                }
+            }
+        ],
+        "refresh_tokens": [
+            {
+                "id": "a3f4e8066389495ea030efd0bf0d5cd4",
+                "user_id": "563d33967d924c588c6ecbff5eb96ed8",
+                "client_id": null,
+                "client_name": null,
+                "client_icon": null,
+                "token_type": "system",
+                "created_at": "2022-04-01T07:45:31.978398+00:00",
+                "access_token_expiration": 1800.0,
+                "token": "e4059f19c8a74f70691dafb6f8f67c7dddc2f6389020cb6c7d9a5596a0eedee4e523e8ef00c56f2e06ebe8eda4c26a26f12764a9802cf24c876e2f8f09418a50",
+                "jwt_key": "38697b84f9313b5652b1f8d85022617e8cc7ef3c6299225cc28af8e519694818ef3634c106e53c1f6e5bda25c17079c61a06fd0ba661800a642cd7d9f350c29c",
+                "last_used_at": null,
+                "last_used_ip": null,
+                "credential_id": null,
+                "version": "2022.3.8"
+            },
+            {
+                "id": "58d1aab125b742f98856591680c886f8",
+                "user_id": "7e27048212fd43d78e900bed6f4ac44c",
+                "client_id": "https://test.tiarkaerell.com/",
+                "client_name": null,
+                "client_icon": null,
+                "token_type": "normal",
+                "created_at": "2022-04-01T08:04:48.046872+00:00",
+                "access_token_expiration": 1800.0,
+                "token": "149461688179de15bb59d25377c890569b12a53cd3607a132d80089cdaa8e4539bc51bfd2b26e93a4574517181c245dfdd8a4b7dbd9fa58b110a834f4ac07306",
+                "jwt_key": "4516dea1cd209768b3918cdb9023464f08778c3f853511dbf524328abbd70e232c5808fd60c05b59fa500e30cfeef24d5c4fafed357965ecdab9c4a3dbd8123d",
+                "last_used_at": "2022-04-01T08:04:48.047248+00:00",
+                "last_used_ip": "85.195.218.245",
+                "credential_id": "9beb9518028c4616948324f9e7e2d071",
+                "version": "2022.3.8"
+            },
+            {
+                "id": "e0c00138ce364f58af0fae84be751b11",
+                "user_id": "7e27048212fd43d78e900bed6f4ac44c",
+                "client_id": "https://test.tiarkaerell.com/",
+                "client_name": null,
+                "client_icon": null,
+                "token_type": "normal",
+                "created_at": "2022-04-01T08:11:29.188371+00:00",
+                "access_token_expiration": 1800.0,
+                "token": "f3098610d7491485f26994ffcd37e51b32cd46d5719b1a5beab3063c61ca67d0eeb5c6416f1c77d01a420ab16465491cd3703cb1139018277d48476ac7c623de",
+                "jwt_key": "b954d0236661f8bffcf6d25568c06ea906e6c141ea644eca94f50a382d5a84defb07526fca7e61558db216eb6d1d5039be8d1eb04db4ce1d36e50f9731745388",
+                "last_used_at": "2022-04-01T10:28:18.393196+00:00",
+                "last_used_ip": "85.195.218.245",
+                "credential_id": "9beb9518028c4616948324f9e7e2d071",
+                "version": "2022.3.8"
+            },
+            {
+                "id": "c4fbf4356edf49a888812de23ecc63b6",
+                "user_id": "7e27048212fd43d78e900bed6f4ac44c",
+                "client_id": "https://test.tiarkaerell.com/",
+                "client_name": null,
+                "client_icon": null,
+                "token_type": "normal",
+                "created_at": "2022-04-01T10:46:28.226111+00:00",
+                "access_token_expiration": 1800.0,
+                "token": "81f8a38953cc3f3ad6d4a1622baac99d94b1ba939b8388b27a6aff1da417538f67841ae07e23fed18674810b18b9eac1f539dbfae556b15df871a7c4ea7efd0e",
+                "jwt_key": "5053a085fa4621225e4d53c3e26a934d2c92b418c1f98167e614a572d42d4381c526fae86e21f508014686645eb65a0c68c0821ec6c8e1a47e8fc59fe6fedb32",
+                "last_used_at": "2022-04-01T10:46:28.227004+00:00",
+                "last_used_ip": "84.74.113.94",
+                "credential_id": "9beb9518028c4616948324f9e7e2d071",
+                "version": "2022.3.8"
+            }
+        ]
+    }
+}

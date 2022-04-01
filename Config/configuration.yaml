@@ -1,0 +1,21 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+http:
+  server_port: 9443
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.1.194
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+logger:
+  default: info
+  logs:
+    custom_components.vesync: debug

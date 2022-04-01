@@ -1,14 +1,19 @@
 """Config flow utilities."""
 from collections import OrderedDict
+import logging
 
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.components import dhcp
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
+from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN
 from .pyvesync.vesync import VeSync
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class VeSyncFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -56,3 +61,11 @@ class VeSyncFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             title=self._username,
             data={CONF_USERNAME: self._username, CONF_PASSWORD: self._password},
         )
+
+    async def async_step_dhcp(self, discovery_info: dhcp.DhcpServiceInfo) -> FlowResult:
+        """Handle DHCP discovery."""
+        hostname = discovery_info.hostname
+
+        _LOGGER.debug("DHCP discovery detected device %s", hostname)
+        self.context["title_placeholders"] = {"gateway_id": hostname}
+        return await self.async_step_user()

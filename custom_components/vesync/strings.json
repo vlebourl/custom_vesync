@@ -1,8 +1,10 @@
 {
   "config": {
+    "flow_title": "Gateway: {gateway_id}",
     "step": {
       "user": {
-        "title": "Enter Username and Password",
+        "title": "VeSync Integration for Home Assistant",
+        "description": "Custom component for Home Assistant to interact with smart devices via the VeSync platform.",
         "data": {
           "username": "[%key:common::config_flow::data::email%]",
           "password": "[%key:common::config_flow::data::password%]"

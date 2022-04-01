@@ -2,7 +2,12 @@
 import logging
 
 from homeassistant.components.humidifier import HumidifierEntity
-from homeassistant.components.humidifier.const import SUPPORT_MODES
+from homeassistant.components.humidifier.const import (
+    MODE_AUTO,
+    MODE_BOOST,
+    MODE_SLEEP,
+    SUPPORT_MODES,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -15,6 +20,10 @@ _LOGGER = logging.getLogger(__name__)
 
 MAX_HUMIDITY = 80
 MIN_HUMIDITY = 30
+
+MODE_MANUAL = "manual"
+
+MODES = [MODE_AUTO, MODE_BOOST, MODE_SLEEP]
 
 
 async def async_setup_entry(
@@ -68,7 +77,7 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
     @property
     def available_modes(self):
         """Return the available mist modes."""
-        return self.device.config_dict["mist_modes"]
+        return MODES
 
     @property
     def supported_features(self):
@@ -83,8 +92,14 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
     @property
     def mode(self):
         """Get the current preset mode."""
-        if self.smarthumidifier.details["mode"] in self.available_modes:
-            return self.smarthumidifier.details["mode"]
+        if self.smarthumidifier.details["mode"] == MODE_AUTO:
+            return MODE_AUTO
+        if self.smarthumidifier.details["mode"] == MODE_MANUAL:
+            return (
+                MODE_SLEEP
+                if self.smarthumidifier.details["mist_level"] == 1
+                else MODE_BOOST
+            )
         return None
 
     @property
@@ -138,10 +153,8 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
             raise ValueError(
                 "{mode} is not one of the valid available modes: {self.available_modes}"
             )
-        if mode == "manual":
-            self.smarthumidifier.set_mist_level(
-                self.smarthumidifier.details["mist_level"]
-            )
+        if mode != MODE_AUTO:
+            self.smarthumidifier.set_mist_level(1 if mode == MODE_SLEEP else 2)
         else:
             self.smarthumidifier.set_humidity_mode(mode)
         self.schedule_update_ha_state()

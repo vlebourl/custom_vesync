@@ -6,5 +6,11 @@
   "config_flow": true,
   "iot_class": "cloud_polling",
   "version": "0.1.2",
-  "issue_tracker": "https://github.com/vlebourl/vesync-bpo"
+  "issue_tracker": "https://github.com/vlebourl/vesync-bpo",
+  "dhcp": [
+    {
+      "hostname": "levoit-*",
+      "macaddress": "*"
+    }
+  ]
 }

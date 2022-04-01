@@ -2,4 +2,3 @@
 .vscode/**
 **/__pycache__/**
 Config/**
-custom_components/vesync/__pycache__/sensor.cpython-39.pyc

@@ -13,6 +13,9 @@ VS_NUMBERS = "numbers"
 VS_BINARY_SENSORS = "binary_sensors"
 VS_MANAGER = "manager"
 
+VS_MODE_AUTO = "auto"
+VS_MODE_MANUAL = "manual"
+
 DEV_TYPE_TO_HA = {
     "LV-PUR131S": "fan",
     "Core200S": "fan",

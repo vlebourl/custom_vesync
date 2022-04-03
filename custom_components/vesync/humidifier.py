@@ -4,7 +4,7 @@ import logging
 from homeassistant.components.humidifier import HumidifierEntity
 from homeassistant.components.humidifier.const import (
     MODE_AUTO,
-    MODE_BOOST,
+    MODE_NORMAL,
     MODE_SLEEP,
     SUPPORT_MODES,
 )
@@ -14,16 +14,14 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .common import VeSyncDevice, is_humidifier
-from .const import DOMAIN, VS_DISCOVERY, VS_HUMIDIFIERS
+from .const import DOMAIN, VS_DISCOVERY, VS_HUMIDIFIERS, VS_MODE_AUTO, VS_MODE_MANUAL
 
 _LOGGER = logging.getLogger(__name__)
 
 MAX_HUMIDITY = 80
 MIN_HUMIDITY = 30
 
-MODE_MANUAL = "manual"
-
-MODES = [MODE_AUTO, MODE_BOOST, MODE_SLEEP]
+MODES = [MODE_AUTO, MODE_NORMAL, MODE_SLEEP]
 
 
 async def async_setup_entry(
@@ -92,13 +90,13 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
     @property
     def mode(self):
         """Get the current preset mode."""
-        if self.smarthumidifier.details["mode"] == MODE_AUTO:
+        if self.smarthumidifier.details["mode"] == VS_MODE_AUTO:
             return MODE_AUTO
-        if self.smarthumidifier.details["mode"] == MODE_MANUAL:
+        if self.smarthumidifier.details["mode"] == VS_MODE_MANUAL:
             return (
                 MODE_SLEEP
                 if self.smarthumidifier.details["mist_level"] == 1
-                else MODE_BOOST
+                else MODE_NORMAL
             )
         return None
 
@@ -153,10 +151,12 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
             raise ValueError(
                 "{mode} is not one of the valid available modes: {self.available_modes}"
             )
-        if mode != MODE_AUTO:
-            self.smarthumidifier.set_mist_level(1 if mode == MODE_SLEEP else 2)
+        if mode == MODE_AUTO:
+            self.smarthumidifier.set_humidity_mode(VS_MODE_AUTO)
         else:
-            self.smarthumidifier.set_humidity_mode(mode)
+            self.smarthumidifier.set_mist_level(
+                1 if mode == MODE_SLEEP else 2
+            )  # this sets manual mode at the same time.
         self.schedule_update_ha_state()
 
     def turn_on(

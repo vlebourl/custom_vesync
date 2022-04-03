@@ -4,21 +4,21 @@ import json
 import logging
 from typing import Dict, Tuple, Union
 
-from .helpers import Helpers
-from .vesyncbasedevice import VeSyncBaseDevice
+from pyvesync.helpers import Helpers
+from pyvesync.vesyncbasedevice import VeSyncBaseDevice
 
 humid_features: dict = {
     "Classic300S": {
         "module": "VeSyncHumid200300S",
         "models": ["Classic300S", "LUH-A601S-WUSB"],
-        "features": ["night_light"],
+        "features": ["nightlight"],
         "mist_modes": ["auto", "sleep", "manual"],
         "mist_levels": list(range(1, 10)),
     },
     "Classic200S": {
         "module": "VeSyncHumid200S",
         "models": ["Classic200S"],
-        "features": ["nightlight"],
+        "features": [],
         "mist_modes": ["auto", "manual"],
         "mist_levels": list(range(1, 10)),
     },
@@ -26,7 +26,7 @@ humid_features: dict = {
         "module": "VeSyncHumid200300S",
         "models": ["Dual200S", "LUH-D301S-WUSR", "LUH-D301S-WJP", "LUH-D301S-WEU"],
         "features": [],
-        "mist_modes": ["auto", "sleep", "manual"],
+        "mist_modes": ["auto", "manual"],
         "mist_levels": list(range(1, 3)),
     },
     "LV600S": {
@@ -38,7 +38,7 @@ humid_features: dict = {
             "LUH-A602S-WEU",
             "LUH-A602S-WJP",
         ],
-        "features": ["warm_mist", "night_light"],
+        "features": ["warm_mist", "nightlight"],
         "mist_modes": ["humidity", "sleep", "manual"],
         "mist_levels": list(range(1, 10)),
         "warm_mist_levels": [0, 1, 2, 3],

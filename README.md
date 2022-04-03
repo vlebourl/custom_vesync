@@ -18,7 +18,7 @@ This integration can be installed by adding this repository to HACS, then search
 
 ### Manual
 
-Copy the `custom_components/vesync` to your `custom_components` folder. Reboot Home Assistant and configure the 'Overkiz (by Somfy)' integration via the integrations page or press the blue button below.
+Copy the `custom_components/vesync` to your `custom_components` folder. Reboot Home Assistant and configure the 'VeSync' integration via the integrations page or press the blue button below.
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=vesync)
 

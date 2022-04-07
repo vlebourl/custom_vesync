@@ -877,9 +877,10 @@ class VeSyncHumid200300S(VeSyncBaseDevice):
         )
         if r is None or not isinstance(r, dict):
             logger.debug("Error getting status of %s ", self.device_name)
-        outer_result = r.get("result", {})
+            outer_result = None
+        else:
+            outer_result = r.get("result", {})
         inner_result = None
-
         if outer_result is not None:
             inner_result = r.get("result", {}).get("result")
         if inner_result is not None and Helpers.code_check(r):

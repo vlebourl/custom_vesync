@@ -4,8 +4,8 @@ import json
 import logging
 from typing import Dict, Tuple, Union
 
-from pyvesync.helpers import Helpers
-from pyvesync.vesyncbasedevice import VeSyncBaseDevice
+from .helpers import Helpers
+from .vesyncbasedevice import VeSyncBaseDevice
 
 humid_features: dict = {
     "Classic300S": {

@@ -140,7 +140,9 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
             attr["warm_mist_level"] = self.smarthumidifier.details["warm_mist_level"]
 
         if "warm_mist_enabled" in self.smarthumidifier.details:
-            attr["warm_mist_enabled"] = self.smarthumidifier.details["warm_mist_enabled"]
+            attr["warm_mist_enabled"] = self.smarthumidifier.details[
+                "warm_mist_enabled"
+            ]
 
         return attr
 

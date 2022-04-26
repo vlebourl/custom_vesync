@@ -17,6 +17,7 @@ VS_MODE_AUTO = "auto"
 VS_MODE_MANUAL = "manual"
 
 DEV_TYPE_TO_HA = {
+    "LAP-C601S-WUS": "fan",
     "LV-PUR131S": "fan",
     "Core200S": "fan",
     "Core300S": "fan",

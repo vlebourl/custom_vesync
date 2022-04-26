@@ -57,11 +57,12 @@ def _setup_entities(devices, async_add_entities):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
+        _LOGGER.debug("Adding device %s %s", dev.device_name, dev.device_type)
         if DEV_TYPE_TO_HA.get(dev.device_type) == "fan":
             entities.append(VeSyncFanHA(dev))
         else:
             _LOGGER.warning(
-                "%s - Unknown device type - %s", dev.device_name, dev.device_type
+                "Unknown device type %s %s", dev.device_name, dev.device_type
             )
             continue
 

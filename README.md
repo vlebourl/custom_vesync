@@ -1,6 +1,6 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 [![GitHub release](https://img.shields.io/github/release/iMicknl/ha-tahoma.svg)](https://GitHub.com/vlebourl/vesync-bpo/releases/)
-![Discord](https://img.shields.io/discord/968515496217567293?label=Discord)
+[![Discord](https://img.shields.io/discord/968515496217567293?label=Discord)](https://discord.gg/vwN5v5tk)
 
 # VeSync custom component for Home Assistant
 

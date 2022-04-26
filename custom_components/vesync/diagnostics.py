@@ -18,6 +18,10 @@ async def async_get_config_entry_diagnostics(
     for type in ["fans", "outlets", "switches", "bulbs"]:
         for d in data["manager"]._dev_list[type]:
             devices[type].append(
-                {"device": d.config_dict, "config": d.config, "details": d.details}
+                {
+                    "device": d.config_dict or {},
+                    "config": d.config or {},
+                    "details": d.details or {},
+                }
             )
     return devices

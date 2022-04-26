@@ -1,0 +1,56 @@
+name: Unsupported Device
+description: Let's have a look if we can support your device
+title: "Add support for ..."
+labels: [new-device]
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Device
+
+  - type: textarea
+    id: unsupported_device_log
+    attributes:
+      label: Home Assistant log
+      description: Enable [debug logging](https://github.com/iMicknl/ha-tahoma#enable-debug-logging) and paste your full log here. We redact your id's and emailaddresses by default.
+      value: |
+        <details><summary>Logs</summary>
+
+        ```
+        Copy/paste any log here, between the starting and ending backticks. The first log line must start with "Added device (Device...".
+        ```
+
+        </details>
+
+  - type: textarea
+    id: device_command_log
+    validations:
+      required: true
+    attributes:
+      label: Device commands
+      description: In order to gather more information, you can use the `tahoma.get_execution_history` service which will print your execution history to the Home Assistant log. Run the commands via the official vendor app (e.g. TaHoma) and capture the commands. [Read more](https://github.com/iMicknl/ha-tahoma#device-not-working-correctly).
+      value: |
+        <details><summary>Commands logs</summary>
+
+        ```
+        Copy/paste your execution history here.
+        ```
+
+        </details>
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Details
+
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: Additional information
+      description: If you have any additional information for us, use the field below. Please note, you can attach screenshots or screen recordings here, by dragging and dropping files in the field below.
+
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this request!

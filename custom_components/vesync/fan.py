@@ -26,6 +26,7 @@ PRESET_MODES = {
     "Core300S": [FAN_MODE_AUTO, FAN_MODE_SLEEP],
     "Core400S": [FAN_MODE_AUTO, FAN_MODE_SLEEP],
     "LV-PUR131S": [FAN_MODE_AUTO, FAN_MODE_SLEEP],
+    "LAP-C601S-WUS": [FAN_MODE_AUTO, FAN_MODE_SLEEP],
 }
 SPEED_RANGE = (1, 3)  # off is not included
 
@@ -98,7 +99,7 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
     @property
     def preset_modes(self):
         """Get the list of available preset modes."""
-        return PRESET_MODES[self.device.device_type]
+        return PRESET_MODES.get(self.device.device_type, [])
 
     @property
     def preset_mode(self):

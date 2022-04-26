@@ -41,8 +41,10 @@ def _setup_entities(devices, async_add_entities):
     entities = []
     for dev in devices:
         if is_humidifier(dev.device_type):
-            entities.append(VeSyncOutOfWaterSensor(dev))
-            entities.append(VeSyncWaterTankLiftedSensor(dev))
+            entities.extend(
+                (VeSyncOutOfWaterSensor(dev), VeSyncWaterTankLiftedSensor(dev))
+            )
+
         else:
             _LOGGER.warning(
                 "%s - Unknown device type - %s", dev.device_name, dev.device_type

@@ -9,6 +9,10 @@ from homeassistant.core import HomeAssistant
 from .const import DOMAIN
 
 
+def _if_has_attr_else_none(obj, attr):
+    return getattr(obj, attr) if hasattr(obj, attr) else None
+
+
 async def async_get_config_entry_diagnostics(
     hass: HomeAssistant, entry: ConfigEntry
 ) -> dict[str, Any]:
@@ -19,9 +23,9 @@ async def async_get_config_entry_diagnostics(
         for d in data["manager"]._dev_list[type]:
             devices[type].append(
                 {
-                    "device": d.config_dict or {},
-                    "config": d.config or {},
-                    "details": d.details or {},
+                    "device": _if_has_attr_else_none(d, "config_dict") or {},
+                    "config": _if_has_attr_else_none(d, "config") or {},
+                    "details": _if_has_attr_else_none(d, "details") or {},
                 }
             )
     return devices

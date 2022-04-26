@@ -74,6 +74,7 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
 
     def __init__(self, fan):
         """Initialize the VeSync fan device."""
+        _LOGGER.debug("Initializing fan")
         super().__init__(fan)
         self.smartfan = fan
 

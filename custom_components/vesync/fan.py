@@ -79,7 +79,6 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
             self._speed_range = (1, 1)
             self._attr_preset_modes = []
             self._attr_preset_modes = [FAN_MODE_AUTO, FAN_MODE_SLEEP]
-        _LOGGER.debug(self.smartfan.__dict__)
 
     @property
     def supported_features(self):

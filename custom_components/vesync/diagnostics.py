@@ -23,7 +23,7 @@ async def async_get_config_entry_diagnostics(
         for d in data["manager"]._dev_list[type]:
             devices[type].append(
                 {
-                    "device": _if_has_attr_else_none(d, "config_dict") or {},
+                    "config_dict": _if_has_attr_else_none(d, "config_dict") or {},
                     "config": _if_has_attr_else_none(d, "config") or {},
                     "details": _if_has_attr_else_none(d, "details") or {},
                 }

@@ -45,6 +45,7 @@ async def async_process_devices(hass, manager):
     if manager.fans:
         for fan in manager.fans:
             # VeSync classifies humidifiers as fans
+            _LOGGER.debug("Found a fan: %s", fan.__dict__)
             if is_humidifier(fan.device_type):
                 devices[VS_HUMIDIFIERS].append(fan)
                 devices[VS_NUMBERS].append(fan)  # for night light and mist level

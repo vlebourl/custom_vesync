@@ -8,7 +8,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .common import VeSyncBaseEntity, is_humidifier
+from .common import VeSyncBaseEntity, is_air_purifier, is_humidifier
 from .const import DOMAIN, VS_DISCOVERY, VS_NUMBERS
 
 MAX_HUMIDITY = 80
@@ -50,7 +50,8 @@ def _setup_entities(devices, async_add_entities):
                     VeSyncHumidifierTargetLevelHA(dev),
                 )
             )
-
+        elif is_air_purifier(dev.device_type):
+            entities.extend((VeSyncFanSpeedLevelHA(dev),))
         else:
             _LOGGER.debug(
                 "%s - Unknown device type - %s", dev.device_name, dev.device_type
@@ -58,6 +59,63 @@ def _setup_entities(devices, async_add_entities):
             continue
 
     async_add_entities(entities, update_before_add=True)
+
+
+class VeSyncFanNumberEntity(VeSyncBaseEntity, NumberEntity):
+    """Representation of a number for configuring a VeSync fan."""
+
+    def __init__(self, fan):
+        """Initialize the VeSync fan device."""
+        super().__init__(fan)
+        self.smartfan = fan
+
+    @property
+    def entity_category(self):
+        """Return the diagnostic entity category."""
+        return EntityCategory.CONFIG
+
+
+class VeSyncFanSpeedLevelHA(VeSyncFanNumberEntity):
+    """Representation of the fan speed level of a VeSync fan."""
+
+    @property
+    def unique_id(self):
+        """Return the ID of this device."""
+        return f"{super().unique_id}-fan-speed-level"
+
+    @property
+    def name(self):
+        """Return the name of the device."""
+        return f"{super().name} fan speed level"
+
+    @property
+    def value(self):
+        """Return the fan speed level."""
+        return self.device.speed
+
+    @property
+    def min_value(self) -> float:
+        """Return the minimum fan speed level."""
+        return self.device.config_dict["levels"][0]
+
+    @property
+    def max_value(self) -> float:
+        """Return the maximum fan speed level."""
+        return self.device.config_dict["levels"][-1]
+
+    @property
+    def step(self) -> float:
+        """Return the steps for the fan speed level."""
+        return 1.0
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes of the humidifier."""
+        return {"fan speed levels": self.device.config_dict["levels"]}
+
+    def set_value(self, value):
+        """Set the fan speed level."""
+        self.device.change_fan_speed(int(value))
 
 
 class VeSyncHumidifierNumberEntity(VeSyncBaseEntity, NumberEntity):

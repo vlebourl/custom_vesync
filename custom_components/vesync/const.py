@@ -17,10 +17,14 @@ VS_MODE_AUTO = "auto"
 VS_MODE_MANUAL = "manual"
 
 DEV_TYPE_TO_HA = {
-    "LV-PUR131S": "fan",
     "Core200S": "fan",
     "Core300S": "fan",
     "Core400S": "fan",
+    "LAP-C201S-AUSR": "fan",
+    "LAP-C202S-WUSR": "fan",
+    "LAP-C401S-WUSR": "fan",
+    "LAP-C601S-WUS": "fan",
+    "LV-PUR131S": "fan",
     "Classic300S": "humidifier",
     "ESD16": "walldimmer",
     "ESWD16": "walldimmer",

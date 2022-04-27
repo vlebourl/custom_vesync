@@ -91,7 +91,7 @@ class VeSyncFanSpeedLevelHA(VeSyncFanNumberEntity):
     @property
     def value(self):
         """Return the fan speed level."""
-        return self.device.fan_level()
+        return self.device.speed
 
     @property
     def min_value(self) -> float:

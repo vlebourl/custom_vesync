@@ -67,16 +67,24 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
         """Initialize the VeSync fan device."""
         _LOGGER.debug("Initializing fan")
         super().__init__(fan)
-        self._speed_range = (1, max(self.device.levels))
-        self._attr_preset_modes = [
-            mode for mode in ["auto", "sleep"] if mode in self.device.modes
-        ]
         self.smartfan = fan
+        if hasattr(self.smartfan, "config_dict"):
+            self._speed_range = (1, max(self.smartfan.config_dict["levels"]))
+            self._attr_preset_modes = [
+                mode
+                for mode in ["auto", "sleep"]
+                if mode in self.smartfan.config_dict["modes"]
+            ]
+        else:
+            self._speed_range = (1, 1)
+            self._attr_preset_modes = []
+            self._attr_preset_modes = [FAN_MODE_AUTO, FAN_MODE_SLEEP]
+        _LOGGER.debug(self.smartfan.__dict__)
 
     @property
     def supported_features(self):
         """Flag supported features."""
-        return SUPPORT_SET_SPEED
+        return SUPPORT_SET_SPEED if self.speed_count > 1 else 0
 
     @property
     def percentage(self):
@@ -96,9 +104,7 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
     @property
     def preset_mode(self):
         """Get the current preset mode."""
-        if self.smartfan.mode in (FAN_MODE_AUTO, FAN_MODE_SLEEP):
-            return self.smartfan.mode
-        return None
+        return self.smartfan.mode
 
     @property
     def unique_info(self):

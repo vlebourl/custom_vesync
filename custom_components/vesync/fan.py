@@ -21,8 +21,6 @@ _LOGGER = logging.getLogger(__name__)
 FAN_MODE_AUTO = "auto"
 FAN_MODE_SLEEP = "sleep"
 
-SPEED_RANGE = (1, 3)  # off is not included
-
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -69,6 +67,7 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
         """Initialize the VeSync fan device."""
         _LOGGER.debug("Initializing fan")
         super().__init__(fan)
+        self._speed_range = (1, max(self.device.levels))
         self._attr_preset_modes = [
             mode for mode in ["auto", "sleep"] if mode in self.device.modes
         ]
@@ -86,13 +85,13 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
             self.smartfan.mode == "manual"
             and (current_level := self.smartfan.fan_level) is not None
         ):
-            return ranged_value_to_percentage(SPEED_RANGE, current_level)
+            return ranged_value_to_percentage(self._speed_range, current_level)
         return None
 
     @property
     def speed_count(self) -> int:
         """Return the number of speeds the fan supports."""
-        return int_states_in_range(SPEED_RANGE)
+        return int_states_in_range(self._speed_range)
 
     @property
     def preset_mode(self):
@@ -145,7 +144,7 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
 
         self.smartfan.manual_mode()
         self.smartfan.change_fan_speed(
-            math.ceil(percentage_to_ranged_value(SPEED_RANGE, percentage))
+            math.ceil(percentage_to_ranged_value(self._speed_range, percentage))
         )
         self.schedule_update_ha_state()
 

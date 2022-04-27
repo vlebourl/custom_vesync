@@ -20,17 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 
 FAN_MODE_AUTO = "auto"
 FAN_MODE_SLEEP = "sleep"
-# Fixme add other models
-PRESET_MODES = {
-    "Core200S": [FAN_MODE_SLEEP],
-    "Core300S": [FAN_MODE_AUTO, FAN_MODE_SLEEP],
-    "Core400S": [FAN_MODE_AUTO, FAN_MODE_SLEEP],
-    "LAP-C201S-AUSR": [FAN_MODE_SLEEP],
-    "LAP-C202S-WUSR": [FAN_MODE_SLEEP],
-    "LAP-C401S-WUSR": [FAN_MODE_AUTO, FAN_MODE_SLEEP],
-    "LAP-C601S-WUS": [FAN_MODE_AUTO, FAN_MODE_SLEEP],
-    "LV-PUR131S": [FAN_MODE_AUTO, FAN_MODE_SLEEP],
-}
+
 SPEED_RANGE = (1, 3)  # off is not included
 
 
@@ -79,6 +69,9 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
         """Initialize the VeSync fan device."""
         _LOGGER.debug("Initializing fan")
         super().__init__(fan)
+        self._attr_preset_modes = [
+            mode for mode in ["auto", "sleep"] if mode in self.device.modes
+        ]
         self.smartfan = fan
 
     @property
@@ -100,11 +93,6 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
     def speed_count(self) -> int:
         """Return the number of speeds the fan supports."""
         return int_states_in_range(SPEED_RANGE)
-
-    @property
-    def preset_modes(self):
-        """Get the list of available preset modes."""
-        return PRESET_MODES.get(self.device.device_type, [])
 
     @property
     def preset_mode(self):

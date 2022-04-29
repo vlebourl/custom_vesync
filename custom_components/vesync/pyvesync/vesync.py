@@ -1,17 +1,15 @@
 """VeSync API Device Library."""
 
-from itertools import chain
 import logging
 import re
 import time
+from itertools import chain
 from typing import Tuple
 
-from . import (
-    vesyncbulb as bulb_mods,
-    vesyncfan as fan_mods,
-    vesyncoutlet as outlet_mods,
-    vesyncswitch as switch_mods,
-)
+from . import vesyncbulb as bulb_mods
+from . import vesyncfan as fan_mods
+from . import vesyncoutlet as outlet_mods
+from . import vesyncswitch as switch_mods
 from .helpers import Helpers
 from .vesyncbasedevice import VeSyncBaseDevice
 

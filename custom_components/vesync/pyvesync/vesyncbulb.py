@@ -1,8 +1,8 @@
 """Etekcity Smart Light Bulb."""
 
-from abc import ABCMeta, abstractmethod
 import json
 import logging
+from abc import ABCMeta, abstractmethod
 from typing import Dict, Union
 
 from .helpers import Helpers as helpers

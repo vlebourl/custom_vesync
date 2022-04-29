@@ -1,9 +1,9 @@
 """Etekcity Outlets."""
 
-from abc import ABCMeta, abstractmethod
 import json
 import logging
 import time
+from abc import ABCMeta, abstractmethod
 
 from .helpers import Helpers
 from .vesyncbasedevice import VeSyncBaseDevice

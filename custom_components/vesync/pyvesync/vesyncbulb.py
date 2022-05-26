@@ -102,7 +102,7 @@ class VeSyncBulb(VeSyncBaseDevice):
         """Turn off vesync bulbs."""
         return self._toggle("off")
 
-    def _toggle(self, state: str, warning: str):
+    def _toggle(self, state: str):
         if self.toggle(state):
             self.device_status = state
             return True

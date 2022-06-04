@@ -115,6 +115,9 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
         """Return the state attributes of the humidifier."""
         attr = {}
 
+        if "humidity" in self.smarthumidifier.details:
+            attr["current_humidity"] = self.smarthumidifier.details["humidity"]
+
         if "water_lacks" in self.smarthumidifier.details:
             attr["water_lacks"] = self.smarthumidifier.details["water_lacks"]
 

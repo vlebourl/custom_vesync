@@ -22,6 +22,7 @@ MAX_HUMIDITY = 80
 MIN_HUMIDITY = 30
 
 MODES = [MODE_AUTO, MODE_NORMAL, MODE_SLEEP]
+VESYNC_TO_HA_ATTRIBUTES = {"humidity": "current_humidity"}
 
 
 async def async_setup_entry(
@@ -113,38 +114,13 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
     @property
     def extra_state_attributes(self):
         """Return the state attributes of the humidifier."""
+
         attr = {}
-
-        if "humidity" in self.smarthumidifier.details:
-            attr["current_humidity"] = self.smarthumidifier.details["humidity"]
-
-        if "water_lacks" in self.smarthumidifier.details:
-            attr["water_lacks"] = self.smarthumidifier.details["water_lacks"]
-
-        if "humidity_high" in self.smarthumidifier.details:
-            attr["humidity_high"] = self.smarthumidifier.details["humidity_high"]
-
-        if "water_tank_lifted" in self.smarthumidifier.details:
-            attr["water_tank_lifted"] = self.smarthumidifier.details[
-                "water_tank_lifted"
-            ]
-
-        if "automatic_stop_reach_target" in self.smarthumidifier.details:
-            attr["automatic_stop_reach_target"] = self.smarthumidifier.details[
-                "automatic_stop_reach_target"
-            ]
-
-        if "mist_level" in self.smarthumidifier.details:
-            attr["mist_level"] = self.smarthumidifier.details["mist_level"]
-
-        if "warm_mist_level" in self.smarthumidifier.details:
-            attr["warm_mist_level"] = self.smarthumidifier.details["warm_mist_level"]
-
-        if "warm_mist_enabled" in self.smarthumidifier.details:
-            attr["warm_mist_enabled"] = self.smarthumidifier.details[
-                "warm_mist_enabled"
-            ]
-
+        for k, v in self.smarthumidifier.details.items():
+            if k in VESYNC_TO_HA_ATTRIBUTES:
+                attr[VESYNC_TO_HA_ATTRIBUTES[k]] = v
+            elif k not in self.state_attributes:
+                attr[k] = v
         return attr
 
     def set_humidity(self, humidity):

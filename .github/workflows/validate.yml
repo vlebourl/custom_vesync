@@ -13,5 +13,6 @@ jobs:
       - name: HACS validation
         uses: "hacs/action@main"
         with:
+          ignore: "brand"
           category: "integration"
           comment: false

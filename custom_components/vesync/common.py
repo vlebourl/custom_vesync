@@ -2,6 +2,7 @@
 import logging
 
 from homeassistant.helpers.entity import Entity, ToggleEntity
+from pyvesync.vesyncfan import model_features
 
 from .const import (
     DOMAIN,
@@ -13,7 +14,6 @@ from .const import (
     VS_SENSORS,
     VS_SWITCHES,
 )
-from .pyvesync.vesyncfan import model_features
 
 _LOGGER = logging.getLogger(__name__)
 

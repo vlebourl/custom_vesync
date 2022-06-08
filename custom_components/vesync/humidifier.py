@@ -14,7 +14,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .common import VeSyncDevice, is_humidifier
-from .const import DOMAIN, VS_DISCOVERY, VS_HUMIDIFIERS, VS_MODE_AUTO, VS_MODE_MANUAL
+from .const import DOMAIN, VS_DISCOVERY, VS_HUMIDIFIERS, VS_MODE_AUTO, VS_MODE_MANUAL, VS_TO_HA_ATTRIBUTES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,7 +22,6 @@ MAX_HUMIDITY = 80
 MIN_HUMIDITY = 30
 
 MODES = [MODE_AUTO, MODE_NORMAL, MODE_SLEEP]
-VESYNC_TO_HA_ATTRIBUTES = {"humidity": "current_humidity"}
 
 
 async def async_setup_entry(
@@ -117,9 +116,11 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
 
         attr = {}
         for k, v in self.smarthumidifier.details.items():
-            if k in VESYNC_TO_HA_ATTRIBUTES:
-                attr[VESYNC_TO_HA_ATTRIBUTES[k]] = v
-            elif k not in self.state_attributes:
+            if k in VS_TO_HA_ATTRIBUTES:
+                attr[VS_TO_HA_ATTRIBUTES[k]] = v
+            elif k in self.state_attributes:
+                attr[f"vs_{k}"] = v
+            else:
                 attr[k] = v
         return attr
 

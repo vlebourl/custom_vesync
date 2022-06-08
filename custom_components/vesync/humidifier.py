@@ -14,7 +14,14 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .common import VeSyncDevice, is_humidifier
-from .const import DOMAIN, VS_DISCOVERY, VS_HUMIDIFIERS, VS_MODE_AUTO, VS_MODE_MANUAL, VS_TO_HA_ATTRIBUTES
+from .const import (
+    DOMAIN,
+    VS_DISCOVERY,
+    VS_HUMIDIFIERS,
+    VS_MODE_AUTO,
+    VS_MODE_MANUAL,
+    VS_TO_HA_ATTRIBUTES,
+)
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -16,6 +16,8 @@ VS_MANAGER = "manager"
 VS_MODE_AUTO = "auto"
 VS_MODE_MANUAL = "manual"
 
+VS_TO_HA_ATTRIBUTES = {"humidity": "current_humidity"}
+
 DEV_TYPE_TO_HA = {
     "Core200S": "fan",
     "Core300S": "fan",

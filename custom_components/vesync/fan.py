@@ -14,7 +14,7 @@ from homeassistant.util.percentage import (
 )
 
 from .common import VeSyncDevice
-from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_FANS
+from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_FANS, VS_TO_HA_ATTRIBUTES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -114,28 +114,13 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
     def extra_state_attributes(self):
         """Return the state attributes of the fan."""
         attr = {}
-
-        if hasattr(self.smartfan, "active_time"):
-            attr["active_time"] = self.smartfan.active_time
-
-        if hasattr(self.smartfan, "screen_status"):
-            attr["screen_status"] = self.smartfan.screen_status
-
-        if hasattr(self.smartfan, "child_lock"):
-            attr["child_lock"] = self.smartfan.child_lock
-
-        if hasattr(self.smartfan, "night_light"):
-            attr["night_light"] = self.smartfan.night_light
-
-        if hasattr(self.smartfan, "air_quality"):
-            attr["air_quality"] = self.smartfan.air_quality
-
-        if hasattr(self.smartfan, "mode"):
-            attr["mode"] = self.smartfan.mode
-
-        if hasattr(self.smartfan, "filter_life"):
-            attr["filter_life"] = self.smartfan.filter_life
-
+        for k, v in self.smarthumidifier.details.items():
+            if k in VS_TO_HA_ATTRIBUTES:
+                attr[VS_TO_HA_ATTRIBUTES[k]] = v
+            elif k in self.state_attributes:
+                attr[f"vs_{k}"] = v
+            else:
+                attr[k] = v
         return attr
 
     def set_percentage(self, percentage):

@@ -114,7 +114,7 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
     def extra_state_attributes(self):
         """Return the state attributes of the fan."""
         attr = {}
-        for k, v in self.smarthumidifier.details.items():
+        for k, v in self.smartfan.details.items():
             if k in VS_TO_HA_ATTRIBUTES:
                 attr[VS_TO_HA_ATTRIBUTES[k]] = v
             elif k in self.state_attributes:

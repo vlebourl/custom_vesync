@@ -179,12 +179,12 @@ class VeSyncHumidifierWarmthLevelHA(VeSyncHumidifierNumberEntity):
     @property
     def unique_id(self):
         """Return the ID of this device."""
-        return f"{super().unique_id}-warmth-level"
+        return f"{super().unique_id}-warm-mist"
 
     @property
     def name(self):
         """Return the name of the device."""
-        return f"{super().name} warmth level"
+        return f"{super().name} warm mist"
 
     @property
     def value(self):
@@ -209,7 +209,7 @@ class VeSyncHumidifierWarmthLevelHA(VeSyncHumidifierNumberEntity):
     @property
     def extra_state_attributes(self):
         """Return the state attributes of the humidifier."""
-        return {"warmth levels": self.device.config_dict["warm_mist_levels"]}
+        return {"warm mist levels": self.device.config_dict["warm_mist_levels"]}
 
     def set_value(self, value):
         """Set the mist level."""

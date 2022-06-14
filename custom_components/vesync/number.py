@@ -45,7 +45,7 @@ def _setup_entities(devices, async_add_entities):
     for dev in devices:
         if is_humidifier(dev.device_type):
             ext = (VeSyncHumidifierMistLevelHA(dev), VeSyncHumidifierTargetLevelHA(dev))
-            if dev.device.warm_mist_feature:
+            if dev.warm_mist_feature:
                 ext = (*ext, VeSyncHumidifierWarmthLevelHA(dev))
             entities.extend(ext)
         elif is_air_purifier(dev.device_type):
@@ -209,7 +209,7 @@ class VeSyncHumidifierWarmthLevelHA(VeSyncHumidifierNumberEntity):
     @property
     def extra_state_attributes(self):
         """Return the state attributes of the humidifier."""
-        return {"warmth levels": self.device.config_dict["warm_mist_level"]}
+        return {"warmth levels": self.device.config_dict["warm_mist_levels"]}
 
     def set_value(self, value):
         """Set the mist level."""

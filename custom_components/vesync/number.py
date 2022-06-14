@@ -44,12 +44,10 @@ def _setup_entities(devices, async_add_entities):
     entities = []
     for dev in devices:
         if is_humidifier(dev.device_type):
-            entities.extend(
-                (
-                    VeSyncHumidifierMistLevelHA(dev),
-                    VeSyncHumidifierTargetLevelHA(dev),
-                )
-            )
+            ext = (VeSyncHumidifierMistLevelHA(dev), VeSyncHumidifierTargetLevelHA(dev))
+            if dev.device.warm_mist_feature:
+                ext = (*ext, VeSyncHumidifierWarmthLevelHA(dev))
+            entities.extend(ext)
         elif is_air_purifier(dev.device_type):
             entities.extend((VeSyncFanSpeedLevelHA(dev),))
         else:
@@ -173,6 +171,49 @@ class VeSyncHumidifierMistLevelHA(VeSyncHumidifierNumberEntity):
     def set_value(self, value):
         """Set the mist level."""
         self.device.set_mist_level(int(value))
+
+
+class VeSyncHumidifierWarmthLevelHA(VeSyncHumidifierNumberEntity):
+    """Representation of the warmth level of a VeSync humidifier."""
+
+    @property
+    def unique_id(self):
+        """Return the ID of this device."""
+        return f"{super().unique_id}-warmth-level"
+
+    @property
+    def name(self):
+        """Return the name of the device."""
+        return f"{super().name} warmth level"
+
+    @property
+    def value(self):
+        """Return the warmth level."""
+        return self.device.details["warm_mist_level"]
+
+    @property
+    def min_value(self) -> float:
+        """Return the minimum mist level."""
+        return self.device.config_dict["warm_mist_levels"][0]
+
+    @property
+    def max_value(self) -> float:
+        """Return the maximum mist level."""
+        return self.device.config_dict["warm_mist_levels"][-1]
+
+    @property
+    def step(self) -> float:
+        """Return the steps for the mist level."""
+        return 1.0
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes of the humidifier."""
+        return {"warmth levels": self.device.config_dict["warm_mist_level"]}
+
+    def set_value(self, value):
+        """Set the mist level."""
+        self.device.set_warm_level(int(value))
 
 
 class VeSyncHumidifierTargetLevelHA(VeSyncHumidifierNumberEntity):

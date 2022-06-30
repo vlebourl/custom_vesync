@@ -13,7 +13,7 @@ This integration will override the core VeSync integration.
 
 ### HACS
 
-This integration can be installed by adding this repository to HACS, then searching for `VeSync` and choosing install. Reboot Home Assistant and configure the 'VeSync' integration via the integrations page or press the blue button below.
+This integration can be installed by adding this repository to HACS __AS A CUSTOM REPOSITORY__, then searching for `Custom VeSync`, and choosing install. Reboot Home Assistant and configure the 'VeSync' integration via the integrations page or press the blue button below.
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=vesync)
 

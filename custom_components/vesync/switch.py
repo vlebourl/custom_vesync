@@ -52,7 +52,7 @@ def _setup_entities(devices, async_add_entities):
                     VeSyncHumidifierAutoOnHA(dev),
                 )
             )
-        elif getattr(dev,"turn_on_display",None):
+        elif getattr(dev, "turn_on_display", None):
             entities.append(VeSyncHumidifierDisplayHA(dev))
 
         else:

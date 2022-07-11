@@ -52,6 +52,8 @@ def _setup_entities(devices, async_add_entities):
                     VeSyncHumidifierAutoOnHA(dev),
                 )
             )
+        elif "display" in dev.details:
+            entities.append(VeSyncHumidifierDisplayHA(dev))
 
         else:
             _LOGGER.warning(

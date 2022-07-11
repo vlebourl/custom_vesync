@@ -54,11 +54,10 @@ async def async_process_devices(hass, manager):
                 devices[VS_BINARY_SENSORS].append(
                     fan
                 )  # for out of water and water tank lifted sensors
-                if fan.night_light:
-                    devices[VS_LIGHTS].append(fan)  # for night light
             else:
                 if hasattr(fan, "config_dict"):
                     devices[VS_NUMBERS].append(fan)
+                devices[VS_SWITCHES].append(fan)  # for automatic stop and display
                 devices[VS_FANS].append(fan)
         _LOGGER.info("%d VeSync fans found", len(manager.fans))
 

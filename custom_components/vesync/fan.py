@@ -2,7 +2,7 @@
 import logging
 import math
 
-from homeassistant.components.fan import SUPPORT_SET_SPEED, FanEntity
+from homeassistant.components.fan import FanEntity, FanEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -14,12 +14,21 @@ from homeassistant.util.percentage import (
 )
 
 from .common import VeSyncDevice
-from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_FANS, VS_TO_HA_ATTRIBUTES
+from .const import (
+    DEV_TYPE_TO_HA,
+    DOMAIN,
+    VS_DISCOVERY,
+    VS_FAN,
+    VS_FANS,
+    VS_LEVELS,
+    VS_MODE_AUTO,
+    VS_MODE_MANUAL,
+    VS_MODE_SLEEP,
+    VS_MODES,
+    VS_TO_HA_ATTRIBUTES,
+)
 
 _LOGGER = logging.getLogger(__name__)
-
-FAN_MODE_AUTO = "auto"
-FAN_MODE_SLEEP = "sleep"
 
 
 async def async_setup_entry(
@@ -49,7 +58,7 @@ def _setup_entities(devices, async_add_entities):
     entities = []
     for dev in devices:
         _LOGGER.debug("Adding device %s %s", dev.device_name, dev.device_type)
-        if DEV_TYPE_TO_HA.get(dev.device_type) == "fan":
+        if DEV_TYPE_TO_HA.get(dev.device_type) == VS_FAN:
             entities.append(VeSyncFanHA(dev))
         else:
             _LOGGER.warning(
@@ -65,31 +74,32 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
 
     def __init__(self, fan):
         """Initialize the VeSync fan device."""
-        _LOGGER.debug("Initializing fan")
         super().__init__(fan)
         self.smartfan = fan
         if hasattr(self.smartfan, "config_dict"):
-            self._speed_range = (1, max(self.smartfan.config_dict["levels"]))
+            self._speed_range = (1, max(self.smartfan.config_dict[VS_LEVELS]))
             self._attr_preset_modes = [
-                mode
-                for mode in ["auto", "sleep"]
-                if mode in self.smartfan.config_dict["modes"]
+                VS_MODE_MANUAL,
+                *[
+                    mode
+                    for mode in [VS_MODE_AUTO, VS_MODE_SLEEP]
+                    if mode in self.smartfan.config_dict[VS_MODES]
+                ],
             ]
         else:
             self._speed_range = (1, 1)
-            self._attr_preset_modes = []
-            self._attr_preset_modes = [FAN_MODE_AUTO, FAN_MODE_SLEEP]
+            self._attr_preset_modes = [VS_MODE_MANUAL, VS_MODE_AUTO, VS_MODE_SLEEP]
 
     @property
     def supported_features(self):
         """Flag supported features."""
-        return SUPPORT_SET_SPEED if self.speed_count > 1 else 0
+        return FanEntityFeature.PRESET_MODE if self.speed_count > 1 else 0
 
     @property
     def percentage(self):
         """Return the current speed."""
         if (
-            self.smartfan.mode == "manual"
+            self.smartfan.mode == VS_MODE_MANUAL
             and (current_level := self.smartfan.fan_level) is not None
         ):
             return ranged_value_to_percentage(self._speed_range, current_level)
@@ -148,10 +158,12 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
         if not self.smartfan.is_on:
             self.smartfan.turn_on()
 
-        if preset_mode == FAN_MODE_AUTO:
+        if preset_mode == VS_MODE_AUTO:
             self.smartfan.auto_mode()
-        elif preset_mode == FAN_MODE_SLEEP:
+        elif preset_mode == VS_MODE_SLEEP:
             self.smartfan.sleep_mode()
+        elif preset_mode == VS_MODE_MANUAL:
+            self.smartfan.manual_mode()
 
         self.schedule_update_ha_state()
 

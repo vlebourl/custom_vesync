@@ -49,6 +49,8 @@ def _setup_entities(devices, async_add_entities):
             entities.extend((VeSyncPowerSensor(dev), VeSyncEnergySensor(dev)))
         elif is_humidifier(dev.device_type):
             entities.append(VeSyncHumiditySensor(dev))
+        elif "air_quality" in dev.config_dict["features"]:
+            entities.append(VeSyncAirQualitySensor(dev))
         else:
             _LOGGER.warning(
                 "%s - Unknown device type - %s", dev.device_name, dev.device_type
@@ -166,6 +168,40 @@ class VeSyncHumidifierSensorEntity(VeSyncBaseEntity, SensorEntity):
     def entity_category(self):
         """Return the diagnostic entity category."""
         return EntityCategory.DIAGNOSTIC
+
+
+class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
+    """Representation of an air quality sensor."""
+
+    @property
+    def unique_id(self):
+        """Return unique ID for air quality sensor on device."""
+        return f"{super().unique_id}-air-quality"
+
+    @property
+    def name(self):
+        """Return sensor name."""
+        return f"{super().name} air quality"
+
+    @property
+    def device_class(self):
+        """Return the air quality device class."""
+        return SensorDeviceClass.AQI
+
+    @property
+    def native_value(self):
+        """Return the air quality index."""
+        return self.smarthumidifier.details["air_quality_value"]
+
+    @property
+    def native_unit_of_measurement(self):
+        """Return the % unit of measurement."""
+        return " "
+
+    @property
+    def state_class(self):
+        """Return the measurement state class."""
+        return SensorStateClass.MEASUREMENT
 
 
 class VeSyncHumiditySensor(VeSyncHumidifierSensorEntity):

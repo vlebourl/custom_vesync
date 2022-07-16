@@ -59,7 +59,7 @@ async def async_process_devices(hass, manager):
             else:
                 if hasattr(fan, "config_dict"):
                     devices[VS_NUMBERS].append(fan)
-                    if "air_quality" in fan.config_dict["features"]:
+                    if "air_quality" in fan.details or "filter_life" in fan.details:
                         devices[VS_SENSORS].append(fan)
                 devices[VS_SWITCHES].append(fan)  # for automatic stop and display
                 devices[VS_FANS].append(fan)

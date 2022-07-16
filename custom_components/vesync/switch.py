@@ -151,6 +151,33 @@ class VeSyncFanChildLockHA(VeSyncSwitchEntity):
         self.device.child_lock_off()
 
 
+class VeSyncHumidifierDisplayHA(VeSyncSwitchEntity):
+    """Representation of the child lock switch."""
+
+    @property
+    def unique_id(self):
+        """Return the ID of this display."""
+        return f"{super().unique_id}-display"
+
+    @property
+    def name(self):
+        """Return the name of the entity."""
+        return f"{super().name} display"
+
+    @property
+    def is_on(self):
+        """Return True if it is locked."""
+        return self.device.details["display"]
+
+    def turn_on(self, **kwargs):
+        """Turn the lock on."""
+        self.device.turn_on_display()
+
+    def turn_off(self, **kwargs):
+        """Turn the lock off."""
+        self.device.turn_off_display()
+
+
 class VeSyncHumidifierAutomaticStopHA(VeSyncSwitchEntity):
     """Representation of the automatic stop toggle on a VeSync humidifier."""
 

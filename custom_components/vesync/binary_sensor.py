@@ -53,7 +53,7 @@ def _setup_entities(devices, async_add_entities):
     async_add_entities(entities, update_before_add=True)
 
 
-class VeSyncHumidifierBinarySensorEntity(VeSyncBaseEntity, BinarySensorEntity):
+class VeSyncBinarySensorEntity(VeSyncBaseEntity, BinarySensorEntity):
     """Representation of a binary sensor describing diagnostics of a VeSync humidifier."""
 
     def __init__(self, humidifier):
@@ -67,7 +67,7 @@ class VeSyncHumidifierBinarySensorEntity(VeSyncBaseEntity, BinarySensorEntity):
         return EntityCategory.DIAGNOSTIC
 
 
-class VeSyncOutOfWaterSensor(VeSyncHumidifierBinarySensorEntity):
+class VeSyncOutOfWaterSensor(VeSyncBinarySensorEntity):
     """Out of Water Sensor."""
 
     @property
@@ -86,7 +86,7 @@ class VeSyncOutOfWaterSensor(VeSyncHumidifierBinarySensorEntity):
         return self.smarthumidifier.details["water_lacks"]
 
 
-class VeSyncWaterTankLiftedSensor(VeSyncHumidifierBinarySensorEntity):
+class VeSyncWaterTankLiftedSensor(VeSyncBinarySensorEntity):
     """Tank Lifted Sensor."""
 
     @property

@@ -55,7 +55,7 @@ def _setup_entities(devices, async_add_entities):
         elif getattr(dev, "turn_on_display", None):
             entities.append(VeSyncHumidifierDisplayHA(dev))
         elif getattr(dev, "child_lock_on", None):
-            entities.append(VeSyncChildLock(dev))
+            entities.append(VeSyncFanChildLockHA(dev))
         else:
             _LOGGER.warning(
                 "%s - Unknown device type - %s", dev.device_name, dev.device_type

@@ -5,6 +5,7 @@ VS_DISCOVERY = "vesync_discovery_{}"
 SERVICE_UPDATE_DEVS = "update_devices"
 
 VS_SWITCHES = "switches"
+VS_FAN = "fan"
 VS_FANS = "fans"
 VS_LIGHTS = "lights"
 VS_SENSORS = "sensors"
@@ -13,8 +14,12 @@ VS_NUMBERS = "numbers"
 VS_BINARY_SENSORS = "binary_sensors"
 VS_MANAGER = "manager"
 
+VS_LEVELS = "levels"
+VS_MODES = "modes"
+
 VS_MODE_AUTO = "auto"
 VS_MODE_MANUAL = "manual"
+VS_MODE_SLEEP = "sleep"
 
 VS_TO_HA_ATTRIBUTES = {"humidity": "current_humidity"}
 

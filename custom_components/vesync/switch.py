@@ -55,7 +55,7 @@ def _setup_entities(devices, async_add_entities):
         elif getattr(dev, "turn_on_display", None):
             entities.append(VeSyncHumidifierDisplayHA(dev))
         elif getattr(dev, "child_lock_on", None):
-            entities.append(VeSyncChildLock(dev))
+            entities.append(VeSyncFanChildLockHA(dev))
         else:
             _LOGGER.warning(
                 "%s - Unknown device type - %s", dev.device_name, dev.device_type
@@ -149,6 +149,33 @@ class VeSyncFanChildLockHA(VeSyncSwitchEntity):
     def turn_off(self, **kwargs):
         """Turn the lock off."""
         self.device.child_lock_off()
+
+
+class VeSyncHumidifierDisplayHA(VeSyncSwitchEntity):
+    """Representation of the child lock switch."""
+
+    @property
+    def unique_id(self):
+        """Return the ID of this display."""
+        return f"{super().unique_id}-display"
+
+    @property
+    def name(self):
+        """Return the name of the entity."""
+        return f"{super().name} display"
+
+    @property
+    def is_on(self):
+        """Return True if it is locked."""
+        return self.device.details["display"]
+
+    def turn_on(self, **kwargs):
+        """Turn the lock on."""
+        self.device.turn_on_display()
+
+    def turn_off(self, **kwargs):
+        """Turn the lock off."""
+        self.device.turn_off_display()
 
 
 class VeSyncHumidifierAutomaticStopHA(VeSyncSwitchEntity):

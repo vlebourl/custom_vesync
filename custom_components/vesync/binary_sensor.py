@@ -8,7 +8,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .common import VeSyncBaseEntity, is_humidifier
+from .common import VeSyncBaseEntity, has_feature
 from .const import DOMAIN, VS_BINARY_SENSORS, VS_DISCOVERY
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,15 +40,10 @@ def _setup_entities(devices, async_add_entities):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
-        if is_humidifier(dev.device_type):
-            entities.extend(
-                (VeSyncOutOfWaterSensor(dev), VeSyncWaterTankLiftedSensor(dev))
-            )
-
-        else:
-            _LOGGER.warning(
-                "%s - Unknown device type - %s", dev.device_name, dev.device_type
-            )
+        if has_feature(dev, "details", "water_lacks"):
+            entities.append(VeSyncOutOfWaterSensor(dev))
+        if has_feature(dev, "details", "water_tank_lifted"):
+            entities.append(VeSyncWaterTankLiftedSensor(dev))
 
     async_add_entities(entities, update_before_add=True)
 

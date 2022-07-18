@@ -48,7 +48,7 @@ def _setup_entities(devices, async_add_entities):
             if dev.warm_mist_feature:
                 ext = (*ext, VeSyncHumidifierWarmthLevelHA(dev))
             entities.extend(ext)
-        elif is_air_purifier(dev.device_type):
+        elif is_air_purifier(dev.device_type) and hasattr(dev, "config_dict"):
             entities.extend((VeSyncFanSpeedLevelHA(dev),))
         else:
             _LOGGER.debug(

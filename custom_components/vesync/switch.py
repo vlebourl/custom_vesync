@@ -8,7 +8,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .common import VeSyncBaseEntity, VeSyncDevice, is_humidifier
+from .common import VeSyncBaseEntity, VeSyncDevice
 from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_SWITCHES
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,25 +42,16 @@ def _setup_entities(devices, async_add_entities):
     for dev in devices:
         if DEV_TYPE_TO_HA.get(dev.device_type) == "outlet":
             entities.append(VeSyncSwitchHA(dev))
-        elif DEV_TYPE_TO_HA.get(dev.device_type) == "switch":
+        if DEV_TYPE_TO_HA.get(dev.device_type) == "switch":
             entities.append(VeSyncLightSwitch(dev))
-        elif is_humidifier(dev.device_type):
-            entities.extend(
-                (
-                    VeSyncHumidifierDisplayHA(dev),
-                    VeSyncHumidifierAutomaticStopHA(dev),
-                    VeSyncHumidifierAutoOnHA(dev),
-                )
-            )
-        elif getattr(dev, "turn_on_display", None):
+        if getattr(dev, "set_auto_mode", None):
+            entities.append(VeSyncHumidifierAutoOnHA(dev))
+        if getattr(dev, "automatic_stop_on", None):
+            entities.append(VeSyncHumidifierAutomaticStopHA(dev))
+        if getattr(dev, "turn_on_display", None):
             entities.append(VeSyncHumidifierDisplayHA(dev))
-        elif getattr(dev, "child_lock_on", None):
+        if getattr(dev, "child_lock_on", None):
             entities.append(VeSyncFanChildLockHA(dev))
-        else:
-            _LOGGER.warning(
-                "%s - Unknown device type - %s", dev.device_name, dev.device_type
-            )
-            continue
 
     async_add_entities(entities, update_before_add=True)
 

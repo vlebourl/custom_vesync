@@ -1,6 +1,6 @@
 version: 0.1
 cli:
-  version: 0.11.0-beta
+  version: 0.15.0-beta
 lint:
   enabled:
     - actionlint@1.6.9
@@ -11,5 +11,4 @@ lint:
     - isort@5.9.3
     - markdownlint@0.31.1
     - prettier@2.5.1
-    - taplo-fmt@release-cli-0.6.0
     - taplo@release-cli-0.6.0

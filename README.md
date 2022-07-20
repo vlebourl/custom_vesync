@@ -32,6 +32,7 @@ logger:
   default: error
   logs:
     custom_components.vesync: debug
+    pyvesync: debug
 ```
 
 This integration is heavily based on [VeSync_bpo](https://github.com/borpin/vesync-bpo) and [pyvesync](https://pypi.org/project/pyvesync/)

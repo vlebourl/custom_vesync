@@ -8,7 +8,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .common import VeSyncBaseEntity, VeSyncDevice, is_humidifier
+from .common import VeSyncBaseEntity, VeSyncDevice
 from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_SWITCHES
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,24 +42,16 @@ def _setup_entities(devices, async_add_entities):
     for dev in devices:
         if DEV_TYPE_TO_HA.get(dev.device_type) == "outlet":
             entities.append(VeSyncSwitchHA(dev))
-        elif DEV_TYPE_TO_HA.get(dev.device_type) == "switch":
+        if DEV_TYPE_TO_HA.get(dev.device_type) == "switch":
             entities.append(VeSyncLightSwitch(dev))
-        elif is_humidifier(dev.device_type):
-            entities.extend(
-                (
-                    VeSyncHumidifierDisplayHA(dev),
-                    VeSyncHumidifierAutomaticStopHA(dev),
-                    VeSyncHumidifierAutoOnHA(dev),
-                )
-            )
-        elif getattr(dev, "turn_on_display", None):
+        if getattr(dev, "set_auto_mode", None):
+            entities.append(VeSyncHumidifierAutoOnHA(dev))
+        if getattr(dev, "automatic_stop_on", None):
+            entities.append(VeSyncHumidifierAutomaticStopHA(dev))
+        if getattr(dev, "turn_on_display", None):
             entities.append(VeSyncHumidifierDisplayHA(dev))
-
-        else:
-            _LOGGER.warning(
-                "%s - Unknown device type - %s", dev.device_name, dev.device_type
-            )
-            continue
+        if getattr(dev, "child_lock_on", None):
+            entities.append(VeSyncFanChildLockHA(dev))
 
     async_add_entities(entities, update_before_add=True)
 
@@ -109,7 +101,7 @@ class VeSyncLightSwitch(VeSyncBaseSwitch, SwitchEntity):
         self.switch = switch
 
 
-class VeSyncHumidifierSwitchEntity(VeSyncBaseEntity, SwitchEntity):
+class VeSyncSwitchEntity(VeSyncBaseEntity, SwitchEntity):
     """Representation of a switch for configuring a VeSync humidifier."""
 
     def __init__(self, humidifier):
@@ -123,8 +115,35 @@ class VeSyncHumidifierSwitchEntity(VeSyncBaseEntity, SwitchEntity):
         return EntityCategory.CONFIG
 
 
-class VeSyncHumidifierDisplayHA(VeSyncHumidifierSwitchEntity):
-    """Representation of the display on a VeSync humidifier."""
+class VeSyncFanChildLockHA(VeSyncSwitchEntity):
+    """Representation of the child lock switch."""
+
+    @property
+    def unique_id(self):
+        """Return the ID of this display."""
+        return f"{super().unique_id}-child-lock"
+
+    @property
+    def name(self):
+        """Return the name of the entity."""
+        return f"{super().name} child lock"
+
+    @property
+    def is_on(self):
+        """Return True if it is locked."""
+        return self.device.details["child_locked"]
+
+    def turn_on(self, **kwargs):
+        """Turn the lock on."""
+        self.device.child_lock_on()
+
+    def turn_off(self, **kwargs):
+        """Turn the lock off."""
+        self.device.child_lock_off()
+
+
+class VeSyncHumidifierDisplayHA(VeSyncSwitchEntity):
+    """Representation of the child lock switch."""
 
     @property
     def unique_id(self):
@@ -133,24 +152,24 @@ class VeSyncHumidifierDisplayHA(VeSyncHumidifierSwitchEntity):
 
     @property
     def name(self):
-        """Return the name of the display."""
+        """Return the name of the entity."""
         return f"{super().name} display"
 
     @property
     def is_on(self):
-        """Return True if display is on."""
+        """Return True if it is locked."""
         return self.device.details["display"]
 
     def turn_on(self, **kwargs):
-        """Turn the display on."""
+        """Turn the lock on."""
         self.device.turn_on_display()
 
     def turn_off(self, **kwargs):
-        """Turn the display off."""
+        """Turn the lock off."""
         self.device.turn_off_display()
 
 
-class VeSyncHumidifierAutomaticStopHA(VeSyncHumidifierSwitchEntity):
+class VeSyncHumidifierAutomaticStopHA(VeSyncSwitchEntity):
     """Representation of the automatic stop toggle on a VeSync humidifier."""
 
     @property
@@ -177,7 +196,7 @@ class VeSyncHumidifierAutomaticStopHA(VeSyncHumidifierSwitchEntity):
         self.device.automatic_stop_off()
 
 
-class VeSyncHumidifierAutoOnHA(VeSyncHumidifierSwitchEntity):
+class VeSyncHumidifierAutoOnHA(VeSyncSwitchEntity):
     """Provide switch to turn off auto mode and set manual mist level 1 on a VeSync humidifier."""
 
     @property

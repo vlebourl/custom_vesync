@@ -18,6 +18,11 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
+def has_feature(device, dictionary, attribute):
+    """Return the detail of the attribute."""
+    return getattr(device, dictionary, None).get(attribute, None) is not None
+
+
 def is_humidifier(device_type: str) -> bool:
     """Return true if the device type is a humidifier."""
     return model_features(device_type)["module"].find("VeSyncHumid") > -1
@@ -48,21 +53,14 @@ async def async_process_devices(hass, manager):
             _LOGGER.debug("Found a fan: %s", fan.__dict__)
             if is_humidifier(fan.device_type):
                 devices[VS_HUMIDIFIERS].append(fan)
-                devices[VS_NUMBERS].append(fan)  # for night light and mist level
-                devices[VS_SWITCHES].append(fan)  # for automatic stop and display
-                devices[VS_SENSORS].append(fan)  # for humidity sensor
-                devices[VS_BINARY_SENSORS].append(
-                    fan
-                )  # for out of water and water tank lifted sensors
-                if fan.night_light:
-                    devices[VS_LIGHTS].append(fan)  # for night light
             else:
-                if hasattr(fan, "config_dict"):
-                    devices[VS_NUMBERS].append(fan)
-                    if "air_quality" in fan.config_dict["features"]:
-                        devices[VS_SENSORS].append(fan)
-                devices[VS_SWITCHES].append(fan)  # for automatic stop and display
                 devices[VS_FANS].append(fan)
+            devices[VS_NUMBERS].append(fan)
+            devices[VS_SWITCHES].append(fan)
+            devices[VS_SENSORS].append(fan)
+            devices[VS_BINARY_SENSORS].append(fan)
+            devices[VS_LIGHTS].append(fan)
+
         _LOGGER.info("%d VeSync fans found", len(manager.fans))
 
     if manager.bulbs:

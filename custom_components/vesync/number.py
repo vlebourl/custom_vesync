@@ -8,7 +8,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .common import VeSyncBaseEntity, is_air_purifier, is_humidifier
+from .common import VeSyncBaseEntity, has_feature, is_air_purifier, is_humidifier
 from .const import DOMAIN, VS_DISCOVERY, VS_NUMBERS
 
 MAX_HUMIDITY = 80
@@ -43,29 +43,28 @@ def _setup_entities(devices, async_add_entities):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
-        if is_humidifier(dev.device_type):
-            ext = (VeSyncHumidifierMistLevelHA(dev), VeSyncHumidifierTargetLevelHA(dev))
-            if dev.warm_mist_feature:
-                ext = (*ext, VeSyncHumidifierWarmthLevelHA(dev))
-            entities.extend(ext)
-        elif is_air_purifier(dev.device_type):
-            entities.extend((VeSyncFanSpeedLevelHA(dev),))
-        else:
-            _LOGGER.debug(
-                "%s - Unknown device type - %s", dev.device_name, dev.device_type
-            )
-            continue
+        if has_feature(dev, "details", "mist_virtual_level"):
+            entities.append(VeSyncHumidifierMistLevelHA(dev))
+        if has_feature(dev, "config", "auto_target_humidity"):
+            entities.append(VeSyncHumidifierTargetLevelHA(dev))
+        if has_feature(dev, "details", "warm_mist_level"):
+            entities.append(VeSyncHumidifierWarmthLevelHA(dev))
+        if has_feature(dev, "config_dict", "levels"):
+            entities.append((VeSyncFanSpeedLevelHA(dev),))
 
     async_add_entities(entities, update_before_add=True)
 
 
-class VeSyncFanNumberEntity(VeSyncBaseEntity, NumberEntity):
+class VeSyncNumberEntity(VeSyncBaseEntity, NumberEntity):
     """Representation of a number for configuring a VeSync fan."""
 
-    def __init__(self, fan):
+    def __init__(self, device):
         """Initialize the VeSync fan device."""
-        super().__init__(fan)
-        self.smartfan = fan
+        super().__init__(device)
+        if is_air_purifier(device.device_type):
+            self.smartfan = device
+        if is_humidifier(device.device_type):
+            self.smarthumidifier = device
 
     @property
     def entity_category(self):
@@ -73,7 +72,7 @@ class VeSyncFanNumberEntity(VeSyncBaseEntity, NumberEntity):
         return EntityCategory.CONFIG
 
 
-class VeSyncFanSpeedLevelHA(VeSyncFanNumberEntity):
+class VeSyncFanSpeedLevelHA(VeSyncNumberEntity):
     """Representation of the fan speed level of a VeSync fan."""
 
     @property
@@ -116,21 +115,7 @@ class VeSyncFanSpeedLevelHA(VeSyncFanNumberEntity):
         self.device.change_fan_speed(int(value))
 
 
-class VeSyncHumidifierNumberEntity(VeSyncBaseEntity, NumberEntity):
-    """Representation of a number for configuring a VeSync humidifier."""
-
-    def __init__(self, humidifier):
-        """Initialize the VeSync humidifier device."""
-        super().__init__(humidifier)
-        self.smarthumidifier = humidifier
-
-    @property
-    def entity_category(self):
-        """Return the diagnostic entity category."""
-        return EntityCategory.CONFIG
-
-
-class VeSyncHumidifierMistLevelHA(VeSyncHumidifierNumberEntity):
+class VeSyncHumidifierMistLevelHA(VeSyncNumberEntity):
     """Representation of the mist level of a VeSync humidifier."""
 
     @property
@@ -173,7 +158,7 @@ class VeSyncHumidifierMistLevelHA(VeSyncHumidifierNumberEntity):
         self.device.set_mist_level(int(value))
 
 
-class VeSyncHumidifierWarmthLevelHA(VeSyncHumidifierNumberEntity):
+class VeSyncHumidifierWarmthLevelHA(VeSyncNumberEntity):
     """Representation of the warmth level of a VeSync humidifier."""
 
     @property
@@ -216,7 +201,7 @@ class VeSyncHumidifierWarmthLevelHA(VeSyncHumidifierNumberEntity):
         self.device.set_warm_level(int(value))
 
 
-class VeSyncHumidifierTargetLevelHA(VeSyncHumidifierNumberEntity):
+class VeSyncHumidifierTargetLevelHA(VeSyncNumberEntity):
     """Representation of the target humidity level of a VeSync humidifier."""
 
     @property

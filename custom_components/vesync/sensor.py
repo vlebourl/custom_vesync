@@ -13,7 +13,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .common import VeSyncBaseEntity, is_humidifier
+from .common import VeSyncBaseEntity, has_feature
 from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_SENSORS
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,14 +47,12 @@ def _setup_entities(devices, async_add_entities):
     for dev in devices:
         if DEV_TYPE_TO_HA.get(dev.device_type) == "outlet":
             entities.extend((VeSyncPowerSensor(dev), VeSyncEnergySensor(dev)))
-        elif is_humidifier(dev.device_type):
+        if has_feature(dev, "details", "humidity"):
             entities.append(VeSyncHumiditySensor(dev))
-        elif "air_quality" in dev.config_dict["features"]:
+        if has_feature(dev, "details", "air_quality"):
             entities.append(VeSyncAirQualitySensor(dev))
-        else:
-            _LOGGER.warning(
-                "%s - Unknown device type - %s", dev.device_name, dev.device_type
-            )
+        if has_feature(dev, "details", "filter_life"):
+            entities.append(VeSyncFilterLifeSensor(dev))
 
     async_add_entities(entities, update_before_add=True)
 
@@ -197,6 +195,40 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     def native_unit_of_measurement(self):
         """Return the % unit of measurement."""
         return " "
+
+    @property
+    def state_class(self):
+        """Return the measurement state class."""
+        return SensorStateClass.MEASUREMENT
+
+
+class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
+    """Representation of a filter life sensor."""
+
+    @property
+    def unique_id(self):
+        """Return unique ID for filter life sensor on device."""
+        return f"{super().unique_id}-filter-life"
+
+    @property
+    def name(self):
+        """Return sensor name."""
+        return f"{super().name} filter life"
+
+    @property
+    def device_class(self):
+        """Return the filter life device class."""
+        return None
+
+    @property
+    def native_value(self):
+        """Return the filter life index."""
+        return self.smarthumidifier.details["filter_life"]
+
+    @property
+    def native_unit_of_measurement(self):
+        """Return the % unit of measurement."""
+        return PERCENTAGE
 
     @property
     def state_class(self):

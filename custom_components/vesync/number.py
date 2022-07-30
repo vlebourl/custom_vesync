@@ -50,7 +50,7 @@ def _setup_entities(devices, async_add_entities):
         if has_feature(dev, "details", "warm_mist_level"):
             entities.append(VeSyncHumidifierWarmthLevelHA(dev))
         if has_feature(dev, "config_dict", "levels"):
-            entities.append((VeSyncFanSpeedLevelHA(dev),))
+            entities.append(VeSyncFanSpeedLevelHA(dev))
 
     async_add_entities(entities, update_before_add=True)
 

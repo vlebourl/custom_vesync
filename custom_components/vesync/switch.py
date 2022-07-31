@@ -131,7 +131,7 @@ class VeSyncFanChildLockHA(VeSyncSwitchEntity):
     @property
     def is_on(self):
         """Return True if it is locked."""
-        return self.device.details["child_locked"]
+        return self.device.details["child_lock"]
 
     def turn_on(self, **kwargs):
         """Turn the lock on."""

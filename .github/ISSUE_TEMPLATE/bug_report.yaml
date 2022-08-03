@@ -53,7 +53,14 @@ body:
       placeholder: "{}"
       description: >
         Can be found in the Configuration panel -> Integrations -> VeSync -> Diagnostics
+      value: |
+        <details><summary>Diagnostics</summary>
 
+        ```json
+        Copy/paste diagnostics here between the starting and ending backticks.
+        ```
+
+        </details>
   - type: markdown
     attributes:
       value: |

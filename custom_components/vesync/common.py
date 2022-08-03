@@ -1,6 +1,7 @@
 """Common utilities for VeSync Component."""
 import logging
 
+from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.helpers.entity import Entity, ToggleEntity
 from pyvesync.vesyncfan import model_features
 
@@ -47,10 +48,11 @@ async def async_process_devices(hass, manager):
 
     await hass.async_add_executor_job(manager.update)
 
+    _LOGGER.debug("Found the following devices: %s", async_redact_data({k: [d.__dict__ for d in v] for k,v in manager._dev_list.items()},["cid","uuid","mac_id"]))
+
     if manager.fans:
         for fan in manager.fans:
             # VeSync classifies humidifiers as fans
-            _LOGGER.debug("Found a fan: %s", fan.__dict__)
             if is_humidifier(fan.device_type):
                 devices[VS_HUMIDIFIERS].append(fan)
             else:
@@ -61,17 +63,13 @@ async def async_process_devices(hass, manager):
             devices[VS_BINARY_SENSORS].append(fan)
             devices[VS_LIGHTS].append(fan)
 
-        _LOGGER.info("%d VeSync fans found", len(manager.fans))
-
     if manager.bulbs:
         devices[VS_LIGHTS].extend(manager.bulbs)
-        _LOGGER.info("%d VeSync lights found", len(manager.bulbs))
 
     if manager.outlets:
         devices[VS_SWITCHES].extend(manager.outlets)
         # Expose outlets' power & energy usage as separate sensors
         devices[VS_SENSORS].extend(manager.outlets)
-        _LOGGER.info("%d VeSync outlets found", len(manager.outlets))
 
     if manager.switches:
         for switch in manager.switches:
@@ -79,7 +77,6 @@ async def async_process_devices(hass, manager):
                 devices[VS_SWITCHES].append(switch)
             else:
                 devices[VS_LIGHTS].append(switch)
-        _LOGGER.info("%d VeSync switches found", len(manager.switches))
 
     return devices
 

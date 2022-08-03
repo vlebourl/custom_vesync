@@ -51,7 +51,7 @@ def _setup_entities(devices, async_add_entities):
         if DEV_TYPE_TO_HA.get(dev.device_type) in ("bulb-tunable-white",):
             entities.append(VeSyncTunableWhiteLightHA(dev))
         if dev.night_light:
-            entities.append(VeSyncHumidifierNightLightHA(dev))
+            entities.append(VeSyncNightLightHA(dev))
 
     async_add_entities(entities, update_before_add=True)
 
@@ -197,13 +197,13 @@ class VeSyncTunableWhiteLightHA(VeSyncBaseLight, LightEntity):
         return [COLOR_MODE_COLOR_TEMP]
 
 
-class VeSyncHumidifierNightLightHA(VeSyncDimmableLightHA):
-    """Representation of the night light on a VeSync humidifier."""
+class VeSyncNightLightHA(VeSyncDimmableLightHA):
+    """Representation of the night light on a VeSync device."""
 
-    def __init__(self, humidifier):
-        """Initialize the VeSync humidifier device."""
-        super().__init__(humidifier)
-        self.smarthumidifier = humidifier
+    def __init__(self, device):
+        """Initialize the VeSync device."""
+        super().__init__(device)
+        self.device = device
 
     @property
     def unique_id(self):
@@ -219,20 +219,18 @@ class VeSyncHumidifierNightLightHA(VeSyncDimmableLightHA):
     def brightness(self):
         """Get night light brightness."""
         return (
-            _vesync_brightness_to_ha(
-                self.smarthumidifier.details["night_light_brightness"]
-            )
-            if has_feature(self.smarthumidifier, "details", "warm_mist_level")
+            _vesync_brightness_to_ha(self.device.details["night_light_brightness"])
+            if has_feature(self.device, "details", "night_light_brightness")
             else None
         )
 
     @property
     def is_on(self):
         """Return True if night light is on."""
-        if self.device.config_dict["module"] == "VeSyncAirBypass":
-            return self.smarthumidifier.details["night_light"] == "on"
-        else:
-            return self.smarthumidifier.details["night_light_brightness"] > 0
+        if has_feature(self.device, "details", "night_light"):
+            return self.device.details["night_light"] == "on"
+        if has_feature(self.device, "details", "night_light_brightness"):
+            return self.device.details["night_light_brightness"] > 0
 
     @property
     def entity_category(self):
@@ -241,17 +239,17 @@ class VeSyncHumidifierNightLightHA(VeSyncDimmableLightHA):
 
     def turn_on(self, **kwargs):
         """Turn the night light on."""
-        if ATTR_BRIGHTNESS in kwargs:
+        if self.device.config_dict["module"] == "VeSyncAirBypass":
+            self.device.set_night_light("on")
+        elif ATTR_BRIGHTNESS in kwargs:
             brightness = _ha_brightness_to_vesync(kwargs[ATTR_BRIGHTNESS])
-            self.smarthumidifier.set_night_light_brightness(brightness)
-        elif self.device.config_dict["module"] == "VeSyncAirBypass":
-            self.smarthumidifier.set_night_light("on")
+            self.device.set_night_light_brightness(brightness)
         else:
-            self.smarthumidifier.set_night_light_brightness(100)
+            self.device.set_night_light_brightness(100)
 
     def turn_off(self, **kwargs):
         """Turn the night light off."""
         if self.device.config_dict["module"] == "VeSyncAirBypass":
-            self.smarthumidifier.set_night_light("off")
+            self.device.set_night_light("off")
         else:
-            self.smarthumidifier.set_night_light_brightness(0)
+            self.device.set_night_light_brightness(0)

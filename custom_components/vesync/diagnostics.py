@@ -26,5 +26,8 @@ async def async_get_config_entry_diagnostics(
     for type in ["fans", "outlets", "switches", "bulbs"]:
         for d in data["manager"]._dev_list[type]:
             t = "humidifier" if is_humidifier(d.device_type) else type
-            devices = {**devices, **{t: [{k: v for k, v in d.__dict__.items() if k != "manager"}]}}
+            devices = {
+                **devices,
+                **{t: [{k: v for k, v in d.__dict__.items() if k != "manager"}]},
+            }
     return async_redact_data(devices, TO_REDACT)

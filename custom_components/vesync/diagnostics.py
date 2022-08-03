@@ -3,10 +3,14 @@ from __future__ import annotations
 
 from typing import Any
 
+from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
+from .common import is_humidifier
 from .const import DOMAIN
+
+TO_REDACT = {"cid", "uuid", "mac_id"}
 
 
 def _if_has_attr_else_none(obj, attr):
@@ -18,14 +22,9 @@ async def async_get_config_entry_diagnostics(
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
     data = hass.data[DOMAIN][entry.entry_id]
-    devices = {"fans": [], "outlets": [], "switches": [], "bulbs": []}
+    devices = {}
     for type in ["fans", "outlets", "switches", "bulbs"]:
         for d in data["manager"]._dev_list[type]:
-            devices[type].append(
-                {
-                    "config_dict": _if_has_attr_else_none(d, "config_dict") or {},
-                    "config": _if_has_attr_else_none(d, "config") or {},
-                    "details": _if_has_attr_else_none(d, "details") or {},
-                }
-            )
-    return devices
+            t = "humidifier" if is_humidifier(d.device_type) else type
+            devices = {**devices, **{t: [{k: v for k, v in d.__dict__.items() if k != "manager"}]}}
+    return async_redact_data(devices, TO_REDACT)

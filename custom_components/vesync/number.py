@@ -76,11 +76,12 @@ class VeSyncFanSpeedLevelHA(VeSyncNumberEntity):
     """Representation of the fan speed level of a VeSync fan."""
 
     def __init__(self, device):
+        """Initialize the number entity"""
         super().__init__(device)
         self._attr_native_min_value = device.config_dict["levels"][0]
         self._attr_native_max_value = device.config_dict["levels"][-1]
         self._attr_native_step = 1
-    
+
     @property
     def unique_id(self):
         """Return the ID of this device."""
@@ -110,11 +111,12 @@ class VeSyncHumidifierMistLevelHA(VeSyncNumberEntity):
     """Representation of the mist level of a VeSync humidifier."""
 
     def __init__(self, device):
+        """Initialize the number entity"""
         super().__init__(device)
         self._attr_native_min_value = device.config_dict["mist_levels"][0]
         self._attr_native_max_value = device.config_dict["mist_levels"][-1]
         self._attr_native_step = 1
-    
+
     @property
     def unique_id(self):
         """Return the ID of this device."""
@@ -144,11 +146,12 @@ class VeSyncHumidifierWarmthLevelHA(VeSyncNumberEntity):
     """Representation of the warmth level of a VeSync humidifier."""
 
     def __init__(self, device):
+        """Initialize the number entity"""
         super().__init__(device)
         self._attr_native_min_value = device.config_dict["warm_mist_levels"][0]
         self._attr_native_max_value = device.config_dict["warm_mist_levels"][-1]
         self._attr_native_step = 1
-    
+
     @property
     def unique_id(self):
         """Return the ID of this device."""
@@ -178,11 +181,12 @@ class VeSyncHumidifierTargetLevelHA(VeSyncNumberEntity):
     """Representation of the target humidity level of a VeSync humidifier."""
 
     def __init__(self, device):
+        """Initialize the number entity"""
         super().__init__(device)
         self._attr_native_min_value = MIN_HUMIDITY
         self._attr_native_max_value = MAX_HUMIDITY
         self._attr_native_step = 1
-    
+
     @property
     def unique_id(self):
         """Return the ID of this device."""

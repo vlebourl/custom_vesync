@@ -14,7 +14,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .common import VeSyncDevice
+from .common import VeSyncDevice, has_feature
 from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_LIGHTS
 
 _LOGGER = logging.getLogger(__name__)
@@ -66,7 +66,7 @@ def _vesync_brightness_to_ha(vesync_brightness):
             "VeSync - received unexpected 'brightness' value from pyvesync api: %s",
             vesync_brightness,
         )
-        return 0
+        return None
     # convert percent brightness to ha expected range
     return round((max(1, brightness_value) / 100) * 255)
 
@@ -218,9 +218,12 @@ class VeSyncHumidifierNightLightHA(VeSyncDimmableLightHA):
     @property
     def brightness(self):
         """Get night light brightness."""
-        # get value from pyvesync library api,
-        return _vesync_brightness_to_ha(
-            self.smarthumidifier.details["night_light_brightness"]
+        return (
+            _vesync_brightness_to_ha(
+                self.smarthumidifier.details["night_light_brightness"]
+            )
+            if has_feature(self.smarthumidifier, "details", "warm_mist_level")
+            else None
         )
 
     @property

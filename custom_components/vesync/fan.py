@@ -81,7 +81,7 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
         if has_feature(self.smartfan, "config_dict", VS_LEVELS):
             self._speed_range = (1, max(self.smartfan.config_dict[VS_LEVELS]))
         if has_feature(self.smartfan, "config_dict", VS_MODES):
-             self._attr_preset_modes = [
+            self._attr_preset_modes = [
                 VS_MODE_MANUAL,
                 *[
                     mode
@@ -89,13 +89,17 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
                     if mode in self.smartfan.config_dict[VS_MODES]
                 ],
             ]
-        if self.smartfan.device_type == 'LV-PUR131S':
+        if self.smartfan.device_type == "LV-PUR131S":
             self._speed_range = (1, 3)
 
     @property
     def supported_features(self):
         """Flag supported features."""
-        return FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE if self.speed_count > 1 else FanEntityFeature.SET_SPEED
+        return (
+            FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE
+            if self.speed_count > 1
+            else FanEntityFeature.SET_SPEED
+        )
 
     @property
     def percentage(self):

@@ -195,7 +195,6 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
         return quality.capitalize() if isinstance(quality, str) else quality
 
 
-
 class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
     """Representation of a filter life sensor."""
 
@@ -217,7 +216,11 @@ class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
     @property
     def native_value(self):
         """Return the filter life index."""
-        return self.smarthumidifier.filter_life if hasattr(self.smarthumidifier,"filter_life") else self.smarthumidifier.details["filter_life"]
+        return (
+            self.smarthumidifier.filter_life
+            if hasattr(self.smarthumidifier, "filter_life")
+            else self.smarthumidifier.details["filter_life"]
+        )
 
     @property
     def native_unit_of_measurement(self):
@@ -232,7 +235,11 @@ class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
     @property
     def state_attributes(self):
         """Return the state attributes."""
-        return self.smarthumidifier.details["filter_life"] if isinstance(self.smarthumidifier.details["filter_life"], dict) else {}
+        return (
+            self.smarthumidifier.details["filter_life"]
+            if isinstance(self.smarthumidifier.details["filter_life"], dict)
+            else {}
+        )
 
 
 class VeSyncHumiditySensor(VeSyncHumidifierSensorEntity):

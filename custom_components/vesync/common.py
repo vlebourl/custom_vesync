@@ -21,7 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def has_feature(device, dictionary, attribute):
     """Return the detail of the attribute."""
-    return getattr(device, dictionary, None).get(attribute, None) is not None
+    return getattr(device, dictionary, {}).get(attribute, None) is not None
 
 
 def is_humidifier(device_type: str) -> bool:

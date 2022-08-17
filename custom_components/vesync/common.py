@@ -21,7 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def has_feature(device, dictionary, attribute):
     """Return the detail of the attribute."""
-    return getattr(device, dictionary, None).get(attribute, None) is not None
+    return getattr(device, dictionary, {}).get(attribute, None) is not None
 
 
 def is_humidifier(device_type: str) -> bool:
@@ -48,7 +48,13 @@ async def async_process_devices(hass, manager):
 
     await hass.async_add_executor_job(manager.update)
 
-    _LOGGER.debug("Found the following devices: %s", async_redact_data({k: [d.__dict__ for d in v] for k,v in manager._dev_list.items()},["cid","uuid","mac_id"]))
+    _LOGGER.debug(
+        "Found the following devices: %s",
+        async_redact_data(
+            {k: [d.__dict__ for d in v] for k, v in manager._dev_list.items()},
+            ["cid", "uuid", "mac_id"],
+        ),
+    )
 
     if manager.fans:
         for fan in manager.fans:

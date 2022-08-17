@@ -13,7 +13,7 @@ from homeassistant.util.percentage import (
     ranged_value_to_percentage,
 )
 
-from .common import VeSyncDevice
+from .common import VeSyncDevice, has_feature
 from .const import (
     DEV_TYPE_TO_HA,
     DOMAIN,
@@ -76,8 +76,11 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
         """Initialize the VeSync fan device."""
         super().__init__(fan)
         self.smartfan = fan
-        if hasattr(self.smartfan, "config_dict"):
+        self._speed_range = (1, 1)
+        self._attr_preset_modes = [VS_MODE_MANUAL, VS_MODE_AUTO, VS_MODE_SLEEP]
+        if has_feature(self.smartfan, "config_dict", VS_LEVELS):
             self._speed_range = (1, max(self.smartfan.config_dict[VS_LEVELS]))
+        if has_feature(self.smartfan, "config_dict", VS_MODES):
             self._attr_preset_modes = [
                 VS_MODE_MANUAL,
                 *[
@@ -86,14 +89,17 @@ class VeSyncFanHA(VeSyncDevice, FanEntity):
                     if mode in self.smartfan.config_dict[VS_MODES]
                 ],
             ]
-        else:
-            self._speed_range = (1, 1)
-            self._attr_preset_modes = [VS_MODE_MANUAL, VS_MODE_AUTO, VS_MODE_SLEEP]
+        if self.smartfan.device_type == "LV-PUR131S":
+            self._speed_range = (1, 3)
 
     @property
     def supported_features(self):
         """Flag supported features."""
-        return FanEntityFeature.PRESET_MODE if self.speed_count > 1 else 0
+        return (
+            FanEntityFeature.SET_SPEED | FanEntityFeature.PRESET_MODE
+            if self.speed_count > 1
+            else FanEntityFeature.SET_SPEED
+        )
 
     @property
     def percentage(self):

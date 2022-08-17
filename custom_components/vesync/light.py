@@ -50,7 +50,7 @@ def _setup_entities(devices, async_add_entities):
             entities.append(VeSyncDimmableLightHA(dev))
         if DEV_TYPE_TO_HA.get(dev.device_type) in ("bulb-tunable-white",):
             entities.append(VeSyncTunableWhiteLightHA(dev))
-        if dev.night_light:
+        if hasattr(dev, "night_light"):
             entities.append(VeSyncNightLightHA(dev))
 
     async_add_entities(entities, update_before_add=True)

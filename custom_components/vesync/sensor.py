@@ -171,6 +171,9 @@ class VeSyncHumidifierSensorEntity(VeSyncBaseEntity, SensorEntity):
 class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     """Representation of an air quality sensor."""
 
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_device_class = SensorDeviceClass.AQI
+
     @property
     def unique_id(self):
         """Return unique ID for air quality sensor on device."""
@@ -182,24 +185,14 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
         return f"{super().name} air quality"
 
     @property
-    def device_class(self):
-        """Return the air quality device class."""
-        return SensorDeviceClass.AQI
-
-    @property
     def native_value(self):
         """Return the air quality index."""
-        return self.smarthumidifier.details["air_quality_value"]
-
-    @property
-    def native_unit_of_measurement(self):
-        """Return the % unit of measurement."""
-        return " "
-
-    @property
-    def state_class(self):
-        """Return the measurement state class."""
-        return SensorStateClass.MEASUREMENT
+        quality = None
+        if has_feature(self.smarthumidifier, "details", "air_quality"):
+            quality = self.smarthumidifier.details["air_quality"]
+        elif has_feature(self.smarthumidifier, "details", "air_quality_value"):
+            quality = self.smarthumidifier.details["air_quality_value"]
+        return quality.capitalize() if isinstance(quality, str) else quality
 
 
 class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
@@ -223,7 +216,11 @@ class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
     @property
     def native_value(self):
         """Return the filter life index."""
-        return self.smarthumidifier.details["filter_life"]
+        return (
+            self.smarthumidifier.filter_life
+            if hasattr(self.smarthumidifier, "filter_life")
+            else self.smarthumidifier.details["filter_life"]
+        )
 
     @property
     def native_unit_of_measurement(self):
@@ -234,6 +231,15 @@ class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
     def state_class(self):
         """Return the measurement state class."""
         return SensorStateClass.MEASUREMENT
+
+    @property
+    def state_attributes(self):
+        """Return the state attributes."""
+        return (
+            self.smarthumidifier.details["filter_life"]
+            if isinstance(self.smarthumidifier.details["filter_life"], dict)
+            else {}
+        )
 
 
 class VeSyncHumiditySensor(VeSyncHumidifierSensorEntity):

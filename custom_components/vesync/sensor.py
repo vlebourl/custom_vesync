@@ -188,10 +188,10 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     def native_value(self):
         """Return the air quality index."""
         quality = None
-        if has_feature(self.smarthumidifier, "details", "air_quality"):
-            quality = self.smarthumidifier.details["air_quality"]
-        elif has_feature(self.smarthumidifier, "details", "air_quality_value"):
+        if has_feature(self.smarthumidifier, "details", "air_quality_value"):
             quality = self.smarthumidifier.details["air_quality_value"]
+        elif has_feature(self.smarthumidifier, "details", "air_quality"):
+            quality = self.smarthumidifier.details["air_quality"]
         return quality.capitalize() if isinstance(quality, str) else quality
 
 

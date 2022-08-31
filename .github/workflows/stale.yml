@@ -21,7 +21,7 @@ jobs:
 
             This issue now has been marked as stale and will be closed if no further
             activity occurs. Thank you for your contributions.'
-          days-before-stale: 15
-          days-before-close: 15
+          days-before-stale: 7
+          days-before-close: 7
           stale-issue-label: 'no-issue-activity'
           exempt-issue-labels: 'work-in-progress,blocked,help wanted,under investigation'

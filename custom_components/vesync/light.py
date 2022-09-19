@@ -204,6 +204,9 @@ class VeSyncNightLightHA(VeSyncDimmableLightHA):
         """Initialize the VeSync device."""
         super().__init__(device)
         self.device = device
+        self.has_brightness = has_feature(
+            self.device, "details", "night_light_brightness"
+        )
 
     @property
     def unique_id(self):
@@ -220,16 +223,16 @@ class VeSyncNightLightHA(VeSyncDimmableLightHA):
         """Get night light brightness."""
         return (
             _vesync_brightness_to_ha(self.device.details["night_light_brightness"])
-            if has_feature(self.device, "details", "night_light_brightness")
-            else None
+            if self.has_brightness
+            else {"on": 255, "dim": 125, "off": 0}[self.device.details["night_light"]]
         )
 
     @property
     def is_on(self):
         """Return True if night light is on."""
         if has_feature(self.device, "details", "night_light"):
-            return self.device.details["night_light"] == "on"
-        if has_feature(self.device, "details", "night_light_brightness"):
+            return self.device.details["night_light"] in ["on", "dim"]
+        if self.has_brightness:
             return self.device.details["night_light_brightness"] > 0
 
     @property
@@ -240,10 +243,14 @@ class VeSyncNightLightHA(VeSyncDimmableLightHA):
     def turn_on(self, **kwargs):
         """Turn the night light on."""
         if self.device.config_dict["module"] == "VeSyncAirBypass":
-            self.device.set_night_light("on")
+            if ATTR_BRIGHTNESS in kwargs and kwargs[ATTR_BRIGHTNESS] < 255:
+                self.device.set_night_light("dim")
+            else:
+                self.device.set_night_light("on")
         elif ATTR_BRIGHTNESS in kwargs:
-            brightness = _ha_brightness_to_vesync(kwargs[ATTR_BRIGHTNESS])
-            self.device.set_night_light_brightness(brightness)
+            self.device.set_night_light_brightness(
+                _ha_brightness_to_vesync(kwargs[ATTR_BRIGHTNESS])
+            )
         else:
             self.device.set_night_light_brightness(100)
 

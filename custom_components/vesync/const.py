@@ -33,6 +33,7 @@ DEV_TYPE_TO_HA = {
     "LAP-C601S-WUS": "fan",
     "LAP-C601S-WEU": "fan",
     "LV-PUR131S": "fan",
+    "LV600S": "humidifier",
     "Classic300S": "humidifier",
     "ESD16": "walldimmer",
     "ESWD16": "walldimmer",

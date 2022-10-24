@@ -1,5 +1,4 @@
 """Support for number settings on VeSync devices."""
-import logging
 
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
@@ -8,13 +7,11 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .common import VeSyncBaseEntity, has_feature, is_air_purifier, is_humidifier
+from .common import VeSyncBaseEntity, has_feature
 from .const import DOMAIN, VS_DISCOVERY, VS_NUMBERS
 
 MAX_HUMIDITY = 80
 MIN_HUMIDITY = 30
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -61,10 +58,6 @@ class VeSyncNumberEntity(VeSyncBaseEntity, NumberEntity):
     def __init__(self, device):
         """Initialize the VeSync fan device."""
         super().__init__(device)
-        if is_air_purifier(device.device_type):
-            self.smartfan = device
-        if is_humidifier(device.device_type):
-            self.smarthumidifier = device
 
     @property
     def entity_category(self):

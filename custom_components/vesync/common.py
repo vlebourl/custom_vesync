@@ -8,8 +8,10 @@ from pyvesync.vesyncfan import model_features
 from .const import (
     DOMAIN,
     VS_BINARY_SENSORS,
+    VS_FAN_TYPES,
     VS_FANS,
     VS_HUMIDIFIERS,
+    VS_HUMIDIFIERS_TYPES,
     VS_LIGHTS,
     VS_NUMBERS,
     VS_SENSORS,
@@ -26,12 +28,12 @@ def has_feature(device, dictionary, attribute):
 
 def is_humidifier(device_type: str) -> bool:
     """Return true if the device type is a humidifier."""
-    return model_features(device_type)["module"].find("VeSyncHumid") > -1
+    return model_features(device_type)["module"] in VS_HUMIDIFIERS_TYPES
 
 
 def is_air_purifier(device_type: str) -> bool:
     """Return true if the device type is a an air purifier."""
-    return model_features(device_type)["module"].find("VeSyncAirBypass") > -1
+    return model_features(device_type)["module"] in VS_FAN_TYPES
 
 
 async def async_process_devices(hass, manager):
@@ -47,22 +49,38 @@ async def async_process_devices(hass, manager):
     }
 
     await hass.async_add_executor_job(manager.update)
+    redacted = async_redact_data(
+        {k: [d.__dict__ for d in v] for k, v in manager._dev_list.items()},
+        ["cid", "uuid", "mac_id"],
+    )
 
     _LOGGER.debug(
         "Found the following devices: %s",
-        async_redact_data(
-            {k: [d.__dict__ for d in v] for k, v in manager._dev_list.items()},
-            ["cid", "uuid", "mac_id"],
-        ),
+        redacted,
     )
+
+    if (
+        manager.fans is None
+        and manager.bulbs is None
+        and manager.outlets is None
+        and manager.switches is None
+    ):
+        _LOGGER.error("Could not find any device to add in %s", redacted)
 
     if manager.fans:
         for fan in manager.fans:
             # VeSync classifies humidifiers as fans
             if is_humidifier(fan.device_type):
                 devices[VS_HUMIDIFIERS].append(fan)
-            else:
+            elif is_air_purifier(fan.device_type):
                 devices[VS_FANS].append(fan)
+            else:
+                _LOGGER.warning(
+                    "Unknown device type %s %s (enable debug for more info)",
+                    fan.device_name,
+                    fan.device_type,
+                )
+                continue
             devices[VS_NUMBERS].append(fan)
             devices[VS_SWITCHES].append(fan)
             devices[VS_SENSORS].append(fan)

@@ -1,5 +1,4 @@
 """Support for VeSync humidifiers."""
-import logging
 
 from homeassistant.components.humidifier import HumidifierEntity
 from homeassistant.components.humidifier.const import (
@@ -13,7 +12,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .common import VeSyncDevice, is_humidifier
+from .common import VeSyncDevice
 from .const import (
     DOMAIN,
     VS_DISCOVERY,
@@ -22,8 +21,6 @@ from .const import (
     VS_MODE_MANUAL,
     VS_TO_HA_ATTRIBUTES,
 )
-
-_LOGGER = logging.getLogger(__name__)
 
 MAX_HUMIDITY = 80
 MIN_HUMIDITY = 30
@@ -55,17 +52,9 @@ async def async_setup_entry(
 @callback
 def _setup_entities(devices, async_add_entities):
     """Check if device is online and add entity."""
-    entities = []
-    for dev in devices:
-        if is_humidifier(dev.device_type):
-            entities.append(VeSyncHumidifierHA(dev))
-        else:
-            _LOGGER.warning(
-                "%s - Unknown device type - %s", dev.device_name, dev.device_type
-            )
-            continue
-
-    async_add_entities(entities, update_before_add=True)
+    async_add_entities(
+        [VeSyncHumidifierHA(dev) for dev in devices], update_before_add=True
+    )
 
 
 class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):

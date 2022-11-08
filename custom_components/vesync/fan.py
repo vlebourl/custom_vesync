@@ -1,5 +1,4 @@
 """Support for VeSync fans."""
-import logging
 import math
 
 from homeassistant.components.fan import FanEntity, FanEntityFeature
@@ -15,10 +14,8 @@ from homeassistant.util.percentage import (
 
 from .common import VeSyncDevice, has_feature
 from .const import (
-    DEV_TYPE_TO_HA,
     DOMAIN,
     VS_DISCOVERY,
-    VS_FAN,
     VS_FANS,
     VS_LEVELS,
     VS_MODE_AUTO,
@@ -27,8 +24,6 @@ from .const import (
     VS_MODES,
     VS_TO_HA_ATTRIBUTES,
 )
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -55,18 +50,7 @@ async def async_setup_entry(
 @callback
 def _setup_entities(devices, async_add_entities):
     """Check if device is online and add entity."""
-    entities = []
-    for dev in devices:
-        _LOGGER.debug("Adding device %s %s", dev.device_name, dev.device_type)
-        if DEV_TYPE_TO_HA.get(dev.device_type) == VS_FAN:
-            entities.append(VeSyncFanHA(dev))
-        else:
-            _LOGGER.warning(
-                "Unknown device type %s %s", dev.device_name, dev.device_type
-            )
-            continue
-
-    async_add_entities(entities, update_before_add=True)
+    async_add_entities([VeSyncFanHA(dev) for dev in devices], update_before_add=True)
 
 
 class VeSyncFanHA(VeSyncDevice, FanEntity):

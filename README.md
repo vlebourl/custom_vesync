@@ -35,4 +35,4 @@ logger:
     pyvesync: debug
 ```
 
-This integration is heavily based on [VeSync_bpo](https://github.com/borpin/vesync-bpo) and [pyvesync](https://pypi.org/project/pyvesync/)
+This integration is heavily based on [VeSync_bpo](https://github.com/borpin/vesync-bpo) and [pyvesync](https://github.com/webdjoe/pyvesync)

@@ -69,14 +69,13 @@ async def async_call_action_from_config(
     """Execute a device action."""
     service_data = {ATTR_ENTITY_ID: config[CONF_ENTITY_ID]}
 
-    if config[CONF_TYPE] == "set_mode":
-        service = "set_preset_mode"
-        service_data["preset_mode"] = config[ATTR_MODE]
-    else:
+    if config[CONF_TYPE] != "set_mode":
         return await toggle_entity.async_call_action_from_config(
             hass, config, variables, context, DOMAIN
         )
 
+    service = "set_preset_mode"
+    service_data["preset_mode"] = config[ATTR_MODE]
     await hass.services.async_call(
         "fan", service, service_data, blocking=True, context=context
     )
@@ -88,17 +87,14 @@ async def async_get_action_capabilities(
     """List action capabilities."""
     action_type = config[CONF_TYPE]
 
-    fields = {}
-
-    if action_type == "set_mode":
-        try:
-            available_modes = (
-                get_capability(hass, config[ATTR_ENTITY_ID], "preset_modes") or []
-            )
-        except HomeAssistantError:
-            available_modes = []
-        fields[vol.Required(ATTR_MODE)] = vol.In(available_modes)
-    else:
+    if action_type != "set_mode":
         return {}
 
+    try:
+        available_modes = (
+            get_capability(hass, config[ATTR_ENTITY_ID], "preset_modes") or []
+        )
+    except HomeAssistantError:
+        available_modes = []
+    fields = {vol.Required(ATTR_MODE): vol.In(available_modes)}
     return {"extra_fields": vol.Schema(fields)}

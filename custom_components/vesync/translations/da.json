@@ -1,4 +1,9 @@
 {
+"device_automation": {
+        "action_type": {
+            "set_mode": "Change mode on {entity_name}."
+        }
+    },
     "config": {
         "step": {
             "user": {

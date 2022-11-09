@@ -1,4 +1,9 @@
 {
+"device_automation": {
+        "action_type": {
+            "set_mode": "Change mode on {entity_name}."
+        }
+    },
     "config": {
         "error": {
             "invalid_auth": "\u9a8c\u8bc1\u7801\u65e0\u6548"

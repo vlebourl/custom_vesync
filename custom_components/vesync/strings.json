@@ -1,4 +1,10 @@
 {
+  "title": "VeSync Integration for Home Assistant",
+  "device_automation": {
+    "action_type": {
+        "set_mode": "Change mode on {entity_name}"
+    }
+  },
   "config": {
     "flow_title": "Gateway: {gateway_id}",
     "step": {

@@ -1,4 +1,9 @@
 {
+"device_automation": {
+        "action_type": {
+            "set_mode": "Change mode on {entity_name}."
+        }
+    },
     "config": {
         "abort": {
             "single_instance_allowed": "Allerede konfigurert. Bare \u00e9n enkelt konfigurasjon er mulig."

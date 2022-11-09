@@ -1,4 +1,9 @@
 {
+"device_automation": {
+        "action_type": {
+            "set_mode": "Change mode on {entity_name}."
+        }
+    },
     "config": {
         "abort": {
             "single_instance_allowed": "Ji\u017e nastaveno. Je mo\u017en\u00e1 pouze jedin\u00e1 konfigurace."

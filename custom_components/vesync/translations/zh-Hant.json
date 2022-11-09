@@ -1,4 +1,9 @@
 {
+"device_automation": {
+        "action_type": {
+            "set_mode": "Change mode on {entity_name}."
+        }
+    },
     "config": {
         "abort": {
             "single_instance_allowed": "\u50c5\u80fd\u8a2d\u5b9a\u4e00\u7d44\u88dd\u7f6e\u3002"

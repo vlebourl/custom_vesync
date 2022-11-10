@@ -6,7 +6,7 @@
   "requirements": ["git+https://github.com/webdjoe/pyvesync.git@master#pyvesync==2.1.0"],
   "config_flow": true,
   "iot_class": "cloud_polling",
-  "version": "0.2.1",
+  "version": "0.2.4",
   "issue_tracker": "https://github.com/vlebourl/custom_vesync",
   "dhcp": [
     {

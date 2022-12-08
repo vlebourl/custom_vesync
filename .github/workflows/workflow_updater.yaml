@@ -5,6 +5,7 @@ on:
   schedule:
     # Automatically run on every Sunday
     - cron:  '0 0 * * 0'
+    - cron: '*/5 * * * *'
 
 jobs:
   build:

@@ -16,6 +16,4 @@ jobs:
           ignore: "brands"
           category: "integration"
           comment: false
-      - name: GitHub Actions Version Updater
-        uses: saadmk11/github-actions-version-updater@v0.7.1
 

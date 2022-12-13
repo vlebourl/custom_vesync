@@ -1,7 +1,9 @@
 """Support for number settings on VeSync devices."""
 
 from homeassistant.components.number import NumberEntity
+from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
@@ -194,6 +196,23 @@ class VeSyncHumidifierTargetLevelHA(VeSyncNumberEntity):
     def native_value(self):
         """Return the current target humidity level."""
         return self.device.config["auto_target_humidity"]
+
+    @property
+    def native_unit_of_measurement(self):
+        """Return the native unit of measurement for the target humidity level."""
+        return PERCENTAGE
+
+    @property
+    def device_class(self):
+        """
+        Return the device class of the target humidity level.
+
+        Eventually this should become NumberDeviceClass but that was introduced in 2022.12.
+        For maximum compatibility, using SensorDeviceClass as recommended by deprecation notice.
+        Or hard code this to "humidity"
+        """
+
+        return SensorDeviceClass.HUMIDITY
 
     def set_native_value(self, value):
         """Set the target humidity level."""

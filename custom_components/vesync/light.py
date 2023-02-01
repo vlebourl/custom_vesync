@@ -50,7 +50,7 @@ def _setup_entities(devices, async_add_entities):
             entities.append(VeSyncDimmableLightHA(dev))
         if DEV_TYPE_TO_HA.get(dev.device_type) in ("bulb-tunable-white",):
             entities.append(VeSyncTunableWhiteLightHA(dev))
-        if hasattr(dev, "night_light"):
+        if hasattr(dev, "night_light") and dev.night_light:
             entities.append(VeSyncNightLightHA(dev))
 
     async_add_entities(entities, update_before_add=True)
@@ -78,10 +78,7 @@ def _ha_brightness_to_vesync(ha_brightness):
     brightness = max(1, min(brightness, 255))
     # convert to percent that vesync api expects
     brightness = round((brightness / 255) * 100)
-    # ensure value between 1-100
-    brightness = max(1, min(brightness, 100))
-
-    return brightness
+    return max(1, min(brightness, 100))
 
 
 class VeSyncBaseLight(VeSyncDevice, LightEntity):

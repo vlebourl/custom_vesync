@@ -13,10 +13,6 @@ from .const import DOMAIN
 TO_REDACT = {"cid", "uuid", "mac_id"}
 
 
-def _if_has_attr_else_none(obj, attr):
-    return getattr(obj, attr) if hasattr(obj, attr) else None
-
-
 async def async_get_config_entry_diagnostics(
     hass: HomeAssistant, entry: ConfigEntry
 ) -> dict[str, Any]:

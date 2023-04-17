@@ -12,6 +12,10 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+
+from pyvesync.vesyncfan import VeSyncHumid200300S
+
+
 from .common import VeSyncDevice
 from .const import (
     DOMAIN,
@@ -19,6 +23,7 @@ from .const import (
     VS_HUMIDIFIERS,
     VS_MODE_AUTO,
     VS_MODE_MANUAL,
+    VS_MODE_SLEEP,
     VS_TO_HA_ATTRIBUTES,
 )
 
@@ -26,6 +31,15 @@ MAX_HUMIDITY = 80
 MIN_HUMIDITY = 30
 
 MODES = [MODE_AUTO, MODE_NORMAL, MODE_SLEEP]
+
+
+VS_TO_HA_MODE_MAP = {
+    VS_MODE_MANUAL: MODE_NORMAL,
+    VS_MODE_AUTO: MODE_AUTO,
+    VS_MODE_SLEEP: MODE_SLEEP,
+}
+
+HA_TO_VS_MODE_MAP = {v: k for k, v in VS_TO_HA_MODE_MAP.items()}
 
 
 async def async_setup_entry(
@@ -63,7 +77,7 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
     _attr_max_humidity = MAX_HUMIDITY
     _attr_min_humidity = MIN_HUMIDITY
 
-    def __init__(self, humidifier):
+    def __init__(self, humidifier: VeSyncHumid200300S):
         """Initialize the VeSync humidifier device."""
         super().__init__(humidifier)
         self.smarthumidifier = humidifier
@@ -86,15 +100,7 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
     @property
     def mode(self):
         """Get the current preset mode."""
-        if self.smarthumidifier.details["mode"] == VS_MODE_AUTO:
-            return MODE_AUTO
-        if self.smarthumidifier.details["mode"] == VS_MODE_MANUAL:
-            return (
-                MODE_SLEEP
-                if self.smarthumidifier.details["mist_level"] == 1
-                else MODE_NORMAL
-            )
-        return None
+        return VS_TO_HA_MODE_MAP[self.smarthumidifier.details["mode"]]
 
     @property
     def is_on(self):
@@ -120,7 +126,7 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
                 attr[k] = v
         return attr
 
-    def set_humidity(self, humidity):
+    def set_humidity(self, humidity: int):
         """Set the target humidity of the device."""
         if humidity not in range(self.min_humidity, self.max_humidity + 1):
             raise ValueError(
@@ -129,18 +135,13 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
         self.smarthumidifier.set_humidity(humidity)
         self.schedule_update_ha_state()
 
-    def set_mode(self, mode):
+    def set_mode(self, mode: str):
         """Set the mode of the device."""
         if mode not in self.available_modes:
             raise ValueError(
                 "{mode} is not one of the valid available modes: {self.available_modes}"
             )
-        if mode == MODE_AUTO:
-            self.smarthumidifier.set_humidity_mode(VS_MODE_AUTO)
-        else:
-            self.smarthumidifier.set_mist_level(
-                1 if mode == MODE_SLEEP else 2
-            )  # this sets manual mode at the same time.
+        self.smarthumidifier.set_humidity_mode(HA_TO_VS_MODE_MAP[mode])
         self.schedule_update_ha_state()
 
     def turn_on(
@@ -149,3 +150,6 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
     ) -> None:
         """Turn the device on."""
         self.smarthumidifier.turn_on()
+
+    def turn_off(self, **kwargs):
+        self.smarthumidifier.turn_off()

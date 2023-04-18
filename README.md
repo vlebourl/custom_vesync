@@ -36,3 +36,14 @@ logger:
 ```
 
 This integration is heavily based on [VeSync_bpo](https://github.com/borpin/vesync-bpo) and [pyvesync](https://github.com/webdjoe/pyvesync)
+
+### Contributing
+
+All contributions are very welcomed!
+Please make sure to install `pre-commit` and run the pre-commit hook before submitting a PR.
+
+```sh
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
+```

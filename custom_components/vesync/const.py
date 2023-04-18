@@ -18,6 +18,7 @@ VS_LEVELS = "levels"
 VS_MODES = "modes"
 
 VS_MODE_AUTO = "auto"
+VS_MODE_HUMIDITY = "humidity"
 VS_MODE_MANUAL = "manual"
 VS_MODE_SLEEP = "sleep"
 

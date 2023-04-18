@@ -35,25 +35,27 @@ async def async_setup_entry(
 ) -> None:
     """Set up the VeSync humidifier platform."""
 
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
+
     @callback
     def discover(devices):
         """Add new devices to platform."""
-        _setup_entities(devices, async_add_entities)
+        _setup_entities(devices, async_add_entities, coordinator)
 
     config_entry.async_on_unload(
         async_dispatcher_connect(hass, VS_DISCOVERY.format(VS_HUMIDIFIERS), discover)
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_HUMIDIFIERS], async_add_entities
+        hass.data[DOMAIN][config_entry.entry_id][VS_HUMIDIFIERS], async_add_entities, coordinator
     )
 
 
 @callback
-def _setup_entities(devices, async_add_entities):
+def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     async_add_entities(
-        [VeSyncHumidifierHA(dev) for dev in devices], update_before_add=True
+        [VeSyncHumidifierHA(dev, coordinator) for dev in devices], update_before_add=True
     )
 
 
@@ -63,9 +65,9 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
     _attr_max_humidity = MAX_HUMIDITY
     _attr_min_humidity = MIN_HUMIDITY
 
-    def __init__(self, humidifier):
+    def __init__(self, humidifier, coordinator):
         """Initialize the VeSync humidifier device."""
-        super().__init__(humidifier)
+        super().__init__(humidifier, coordinator)
         self.smarthumidifier = humidifier
 
     @property

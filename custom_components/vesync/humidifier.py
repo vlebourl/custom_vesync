@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Mapping, Any
+from typing import Any, Mapping
 
 from homeassistant.components.humidifier import HumidifierEntity
 from homeassistant.components.humidifier.const import (
@@ -15,10 +15,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
-
 from pyvesync.vesyncfan import VeSyncHumid200300S
-
 
 from .common import VeSyncDevice
 from .const import (
@@ -162,9 +159,7 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
             )
         success = self.smarthumidifier.set_humidity(humidity)
         if not success:
-            raise ValueError(
-                "An error occurred while setting humidity."
-            )
+            raise ValueError("An error occurred while setting humidity.")
         self.schedule_update_ha_state()
 
     def set_mode(self, mode: str) -> None:
@@ -175,9 +170,7 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
             )
         success = self.smarthumidifier.set_humidity_mode(_get_vs_mode(mode))
         if not success:
-            raise ValueError(
-                "An error occurred while setting mode."
-            )
+            raise ValueError("An error occurred while setting mode.")
         self.schedule_update_ha_state()
 
     def turn_on(
@@ -187,13 +180,10 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
         """Turn the device on."""
         success = self.smarthumidifier.turn_on()
         if not success:
-            raise ValueError(
-                "An error occurred while turning on."
-            )
+            raise ValueError("An error occurred while turning on.")
 
     def turn_off(self, **kwargs) -> None:
+        """Turn the device off."""
         success = self.smarthumidifier.turn_off()
         if not success:
-            raise ValueError(
-                "An error occurred while turning off."
-            )
+            raise ValueError("An error occurred while turning off.")

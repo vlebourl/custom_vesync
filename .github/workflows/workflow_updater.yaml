@@ -6,7 +6,7 @@ on:
 
   schedule:
     # Automatically run on every Sunday
-    - cron:  '0 0 * * *'
+    - cron:  '0 0 1 * *'
     
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.2
         with:
           # [Required] Access token with `workflow` scope.
           token: ${{ secrets.WORKFLOW_SECRET }}

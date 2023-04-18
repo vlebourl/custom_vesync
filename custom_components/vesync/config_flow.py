@@ -53,12 +53,16 @@ class VeSyncFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(f"{self._username}-{manager.account_id}")
         self._abort_if_unique_id_configured()
 
-        if not login:
-            return self._show_form(errors={"base": "invalid_auth"})
-
-        return self.async_create_entry(
-            title=self._username,
-            data={CONF_USERNAME: self._username, CONF_PASSWORD: self._password},
+        return (
+            self.async_create_entry(
+                title=self._username,
+                data={
+                    CONF_USERNAME: self._username,
+                    CONF_PASSWORD: self._password,
+                },
+            )
+            if login
+            else self._show_form(errors={"base": "invalid_auth"})
         )
 
     async def async_step_dhcp(self, discovery_info: dhcp.DhcpServiceInfo) -> FlowResult:

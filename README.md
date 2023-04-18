@@ -1,10 +1,10 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
-[![GitHub release](https://img.shields.io/github/release/iMicknl/ha-tahoma.svg)](https://GitHub.com/vlebourl/vesync-bpo/releases/)
-[![Discord](https://img.shields.io/discord/968515496217567293?label=Discord)](https://discord.gg/MbDM9WQf)
+[![GitHub release](https://img.shields.io/github/v/release/vlebourl/custom_vesync.svg)](https://GitHub.com/vlebourl/custom_vesync/releases/)
 
 # VeSync custom component for Home Assistant
 
 Custom component for Home Assistant to interact with smart devices via the VeSync platform.
+This integration is heavily based on [VeSync_bpo](https://github.com/borpin/vesync-bpo) and relies on [pyvesync](https://github.com/webdjoe/pyvesync) under the hood.
 
 ## Installation
 
@@ -35,4 +35,13 @@ logger:
     pyvesync: debug
 ```
 
-This integration is heavily based on [VeSync_bpo](https://github.com/borpin/vesync-bpo) and [pyvesync](https://github.com/webdjoe/pyvesync)
+### Contributing
+
+All contributions are very welcomed!
+Please make sure to install `pre-commit` and run the pre-commit hook before submitting a PR.
+
+```sh
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
+```

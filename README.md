@@ -5,6 +5,7 @@
 # VeSync custom component for Home Assistant
 
 Custom component for Home Assistant to interact with smart devices via the VeSync platform.
+This integration is heavily based on [VeSync_bpo](https://github.com/borpin/vesync-bpo) and relies on [pyvesync](https://github.com/webdjoe/pyvesync) under the hood.
 
 ## Installation
 
@@ -34,8 +35,6 @@ logger:
     custom_components.vesync: debug
     pyvesync: debug
 ```
-
-This integration is heavily based on [VeSync_bpo](https://github.com/borpin/vesync-bpo) and [pyvesync](https://github.com/webdjoe/pyvesync)
 
 ### Contributing
 

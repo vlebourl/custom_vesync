@@ -1,4 +1,6 @@
 """Support for VeSync humidifiers."""
+from __future__ import annotations
+
 import logging
 from typing import Mapping, Any
 

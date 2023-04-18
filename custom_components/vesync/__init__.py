@@ -72,7 +72,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         _LOGGER,
         name="vesync",
         update_method=async_update_data,
-        update_interval=timedelta(seconds=60),
+        update_interval=timedelta(seconds=30),
     )
 
     # Fetch initial data so we have data when entities subscribe

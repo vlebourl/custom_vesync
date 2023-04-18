@@ -47,7 +47,9 @@ async def async_setup_entry(
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_HUMIDIFIERS], async_add_entities, coordinator
+        hass.data[DOMAIN][config_entry.entry_id][VS_HUMIDIFIERS],
+        async_add_entities,
+        coordinator,
     )
 
 
@@ -55,7 +57,8 @@ async def async_setup_entry(
 def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     async_add_entities(
-        [VeSyncHumidifierHA(dev, coordinator) for dev in devices], update_before_add=True
+        [VeSyncHumidifierHA(dev, coordinator) for dev in devices],
+        update_before_add=True,
     )
 
 

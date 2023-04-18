@@ -33,7 +33,9 @@ async def async_setup_entry(
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_BINARY_SENSORS], async_add_entities, coordinator
+        hass.data[DOMAIN][config_entry.entry_id][VS_BINARY_SENSORS],
+        async_add_entities,
+        coordinator,
     )
 
 

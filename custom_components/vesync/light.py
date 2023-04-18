@@ -39,7 +39,9 @@ async def async_setup_entry(
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_LIGHTS], async_add_entities, coordinator
+        hass.data[DOMAIN][config_entry.entry_id][VS_LIGHTS],
+        async_add_entities,
+        coordinator,
     )
 
 
@@ -139,8 +141,9 @@ class VeSyncDimmableLightHA(VeSyncBaseLight, LightEntity):
     """Representation of a VeSync dimmable light device."""
 
     def __init__(self, device, coordinator):
+        """Initialize the VeSync dimmable light device."""
         super().__init__(device, coordinator)
-        
+
     @property
     def color_mode(self):
         """Set color mode for this entity."""
@@ -156,6 +159,7 @@ class VeSyncTunableWhiteLightHA(VeSyncBaseLight, LightEntity):
     """Representation of a VeSync Tunable White Light device."""
 
     def __init__(self, device, coordinator):
+        """Initialize the VeSync Tunable White Light device."""
         super().__init__(device, coordinator)
 
     @property

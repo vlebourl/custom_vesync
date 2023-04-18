@@ -25,7 +25,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up switches."""
-    
+
     coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
 
     @callback
@@ -38,7 +38,9 @@ async def async_setup_entry(
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_SENSORS], async_add_entities, coordinator
+        hass.data[DOMAIN][config_entry.entry_id][VS_SENSORS],
+        async_add_entities,
+        coordinator,
     )
 
 
@@ -48,7 +50,12 @@ def _setup_entities(devices, async_add_entities, coordinator):
     entities = []
     for dev in devices:
         if DEV_TYPE_TO_HA.get(dev.device_type) == "outlet":
-            entities.extend((VeSyncPowerSensor(dev, coordinator), VeSyncEnergySensor(dev, coordinator)))
+            entities.extend(
+                (
+                    VeSyncPowerSensor(dev, coordinator),
+                    VeSyncEnergySensor(dev, coordinator),
+                )
+            )
         if has_feature(dev, "details", "humidity"):
             entities.append(VeSyncHumiditySensor(dev, coordinator))
         if has_feature(dev, "details", "air_quality"):
@@ -122,10 +129,6 @@ class VeSyncEnergySensor(VeSyncOutletSensorEntity):
     def __init__(self, plug, coordinator):
         """Initialize the VeSync outlet device."""
         super().__init__(plug, coordinator)
-
-    def __init__(self, plug):
-        """Initialize the VeSync outlet device."""
-        super().__init__(plug)
         self.smartplug = plug
 
     @property

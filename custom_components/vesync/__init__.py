@@ -1,6 +1,7 @@
 """VeSync integration."""
 import logging
 from datetime import timedelta
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant, ServiceCall
@@ -58,7 +59,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     hass.data[DOMAIN] = {config_entry.entry_id: {}}
     hass.data[DOMAIN][config_entry.entry_id][VS_MANAGER] = manager
-    
+
     # Create a DataUpdateCoordinator for the manager
     async def async_update_data():
         """Fetch data from API endpoint."""
@@ -80,7 +81,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     # Store the coordinator instance in hass.data
     hass.data[DOMAIN][config_entry.entry_id]["coordinator"] = coordinator
-
 
     device_dict = await async_process_devices(hass, manager)
 

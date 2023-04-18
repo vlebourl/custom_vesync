@@ -158,6 +158,8 @@ class VeSyncBaseEntity(CoordinatorEntity, Entity):
         self.async_on_remove(
             self.coordinator.async_add_listener(self.async_write_ha_state)
         )
+
+
 class VeSyncDevice(VeSyncBaseEntity, ToggleEntity):
     """Base class for VeSync Device Representations."""
 

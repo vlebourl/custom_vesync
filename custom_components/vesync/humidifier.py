@@ -162,10 +162,10 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
             raise ValueError(
                 "{humidity} is not between {self.min_humidity} and {self.max_humidity} (inclusive)"
             )
-        success = self.smarthumidifier.set_humidity(humidity)
-        if not success:
+        if self.smarthumidifier.set_humidity(humidity):
+            self.schedule_update_ha_state()
+        else:
             raise ValueError("An error occurred while setting humidity.")
-        self.schedule_update_ha_state()
 
     def set_mode(self, mode: str) -> None:
         """Set the mode of the device."""
@@ -173,10 +173,10 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
             raise ValueError(
                 "{mode} is not one of the valid available modes: {self.available_modes}"
             )
-        success = self.smarthumidifier.set_humidity_mode(_get_vs_mode(mode))
-        if not success:
+        if self.smarthumidifier.set_humidity_mode(_get_vs_mode(mode)):
+            self.schedule_update_ha_state()
+        else:
             raise ValueError("An error occurred while setting mode.")
-        self.schedule_update_ha_state()
 
     def turn_on(
         self,

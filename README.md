@@ -23,6 +23,11 @@ Copy the `custom_components/vesync` to your `custom_components` folder. Reboot H
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=vesync)
 
+You can make sure the custom integration is in use by looking for the following icon in the Settings > Devices & Services page:
+![image](https://user-images.githubusercontent.com/5701372/234820776-11a80f79-5b4d-4dbe-8b63-42579e4a5631.png)
+
+## Logging
+
 ### Enable debug logging
 
 The [logger](https://www.home-assistant.io/integrations/logger/) integration lets you define the level of logging activities in Home Assistant. Turning on debug mode will show more information about unsupported devices in your logbook.

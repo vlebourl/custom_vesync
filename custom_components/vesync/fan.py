@@ -33,32 +33,38 @@ async def async_setup_entry(
 ) -> None:
     """Set up the VeSync fan platform."""
 
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
+
     @callback
     def discover(devices):
         """Add new devices to platform."""
-        _setup_entities(devices, async_add_entities)
+        _setup_entities(devices, async_add_entities, coordinator)
 
     config_entry.async_on_unload(
         async_dispatcher_connect(hass, VS_DISCOVERY.format(VS_FANS), discover)
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_FANS], async_add_entities
+        hass.data[DOMAIN][config_entry.entry_id][VS_FANS],
+        async_add_entities,
+        coordinator,
     )
 
 
 @callback
-def _setup_entities(devices, async_add_entities):
+def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
-    async_add_entities([VeSyncFanHA(dev) for dev in devices], update_before_add=True)
+    async_add_entities(
+        [VeSyncFanHA(dev, coordinator) for dev in devices], update_before_add=True
+    )
 
 
 class VeSyncFanHA(VeSyncDevice, FanEntity):
     """Representation of a VeSync fan."""
 
-    def __init__(self, fan):
+    def __init__(self, fan, coordinator):
         """Initialize the VeSync fan device."""
-        super().__init__(fan)
+        super().__init__(fan, coordinator)
         self.smartfan = fan
         self._speed_range = (1, 1)
         self._attr_preset_modes = [VS_MODE_MANUAL, VS_MODE_AUTO, VS_MODE_SLEEP]

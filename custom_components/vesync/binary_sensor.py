@@ -21,29 +21,33 @@ async def async_setup_entry(
 ) -> None:
     """Set up binary sensors."""
 
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
+
     @callback
     def discover(devices):
         """Add new devices to platform."""
-        _setup_entities(devices, async_add_entities)
+        _setup_entities(devices, async_add_entities, coordinator)
 
     config_entry.async_on_unload(
         async_dispatcher_connect(hass, VS_DISCOVERY.format(VS_BINARY_SENSORS), discover)
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_BINARY_SENSORS], async_add_entities
+        hass.data[DOMAIN][config_entry.entry_id][VS_BINARY_SENSORS],
+        async_add_entities,
+        coordinator,
     )
 
 
 @callback
-def _setup_entities(devices, async_add_entities):
+def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
         if has_feature(dev, "details", "water_lacks"):
-            entities.append(VeSyncOutOfWaterSensor(dev))
+            entities.append(VeSyncOutOfWaterSensor(dev, coordinator))
         if has_feature(dev, "details", "water_tank_lifted"):
-            entities.append(VeSyncWaterTankLiftedSensor(dev))
+            entities.append(VeSyncWaterTankLiftedSensor(dev, coordinator))
 
     async_add_entities(entities, update_before_add=True)
 
@@ -51,9 +55,9 @@ def _setup_entities(devices, async_add_entities):
 class VeSyncBinarySensorEntity(VeSyncBaseEntity, BinarySensorEntity):
     """Representation of a binary sensor describing diagnostics of a VeSync humidifier."""
 
-    def __init__(self, humidifier):
+    def __init__(self, humidifier, coordinator):
         """Initialize the VeSync humidifier device."""
-        super().__init__(humidifier)
+        super().__init__(humidifier, coordinator)
         self.smarthumidifier = humidifier
 
     @property

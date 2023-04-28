@@ -22,6 +22,7 @@ from .const import (
     DOMAIN,
     VS_DISCOVERY,
     VS_HUMIDIFIERS,
+    VS_MODE_AUTO,
     VS_MODE_HUMIDITY,
     VS_MODE_MANUAL,
     VS_MODE_SLEEP,
@@ -36,8 +37,9 @@ MIN_HUMIDITY = 30
 
 
 VS_TO_HA_MODE_MAP = {
-    VS_MODE_MANUAL: MODE_NORMAL,
+    VS_MODE_AUTO: MODE_AUTO,
     VS_MODE_HUMIDITY: MODE_AUTO,
+    VS_MODE_MANUAL: MODE_NORMAL,
     VS_MODE_SLEEP: MODE_SLEEP,
 }
 
@@ -51,25 +53,30 @@ async def async_setup_entry(
 ) -> None:
     """Set up the VeSync humidifier platform."""
 
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
+
     @callback
     def discover(devices):
         """Add new devices to platform."""
-        _setup_entities(devices, async_add_entities)
+        _setup_entities(devices, async_add_entities, coordinator)
 
     config_entry.async_on_unload(
         async_dispatcher_connect(hass, VS_DISCOVERY.format(VS_HUMIDIFIERS), discover)
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_HUMIDIFIERS], async_add_entities
+        hass.data[DOMAIN][config_entry.entry_id][VS_HUMIDIFIERS],
+        async_add_entities,
+        coordinator,
     )
 
 
 @callback
-def _setup_entities(devices, async_add_entities):
+def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     async_add_entities(
-        [VeSyncHumidifierHA(dev) for dev in devices], update_before_add=True
+        [VeSyncHumidifierHA(dev, coordinator) for dev in devices],
+        update_before_add=True,
     )
 
 
@@ -93,9 +100,9 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
     _attr_max_humidity = MAX_HUMIDITY
     _attr_min_humidity = MIN_HUMIDITY
 
-    def __init__(self, humidifier: VeSyncHumid200300S):
+    def __init__(self, humidifier: VeSyncHumid200300S, coordinator):
         """Initialize the VeSync humidifier device."""
-        super().__init__(humidifier)
+        super().__init__(humidifier, coordinator)
         self.smarthumidifier = humidifier
 
     @property
@@ -157,10 +164,10 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
             raise ValueError(
                 "{humidity} is not between {self.min_humidity} and {self.max_humidity} (inclusive)"
             )
-        success = self.smarthumidifier.set_humidity(humidity)
-        if not success:
+        if self.smarthumidifier.set_humidity(humidity):
+            self.schedule_update_ha_state()
+        else:
             raise ValueError("An error occurred while setting humidity.")
-        self.schedule_update_ha_state()
 
     def set_mode(self, mode: str) -> None:
         """Set the mode of the device."""
@@ -168,10 +175,10 @@ class VeSyncHumidifierHA(VeSyncDevice, HumidifierEntity):
             raise ValueError(
                 "{mode} is not one of the valid available modes: {self.available_modes}"
             )
-        success = self.smarthumidifier.set_humidity_mode(_get_vs_mode(mode))
-        if not success:
+        if self.smarthumidifier.set_humidity_mode(_get_vs_mode(mode)):
+            self.schedule_update_ha_state()
+        else:
             raise ValueError("An error occurred while setting mode.")
-        self.schedule_update_ha_state()
 
     def turn_on(
         self,

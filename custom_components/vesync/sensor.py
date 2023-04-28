@@ -26,33 +26,42 @@ async def async_setup_entry(
 ) -> None:
     """Set up switches."""
 
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
+
     @callback
     def discover(devices):
         """Add new devices to platform."""
-        _setup_entities(devices, async_add_entities)
+        _setup_entities(devices, async_add_entities, coordinator)
 
     config_entry.async_on_unload(
         async_dispatcher_connect(hass, VS_DISCOVERY.format(VS_SENSORS), discover)
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_SENSORS], async_add_entities
+        hass.data[DOMAIN][config_entry.entry_id][VS_SENSORS],
+        async_add_entities,
+        coordinator,
     )
 
 
 @callback
-def _setup_entities(devices, async_add_entities):
+def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
         if DEV_TYPE_TO_HA.get(dev.device_type) == "outlet":
-            entities.extend((VeSyncPowerSensor(dev), VeSyncEnergySensor(dev)))
+            entities.extend(
+                (
+                    VeSyncPowerSensor(dev, coordinator),
+                    VeSyncEnergySensor(dev, coordinator),
+                )
+            )
         if has_feature(dev, "details", "humidity"):
-            entities.append(VeSyncHumiditySensor(dev))
+            entities.append(VeSyncHumiditySensor(dev, coordinator))
         if has_feature(dev, "details", "air_quality"):
-            entities.append(VeSyncAirQualitySensor(dev))
+            entities.append(VeSyncAirQualitySensor(dev, coordinator))
         if has_feature(dev, "details", "filter_life"):
-            entities.append(VeSyncFilterLifeSensor(dev))
+            entities.append(VeSyncFilterLifeSensor(dev, coordinator))
 
     async_add_entities(entities, update_before_add=True)
 
@@ -60,9 +69,9 @@ def _setup_entities(devices, async_add_entities):
 class VeSyncOutletSensorEntity(VeSyncBaseEntity, SensorEntity):
     """Representation of a sensor describing diagnostics of a VeSync outlet."""
 
-    def __init__(self, plug):
+    def __init__(self, plug, coordinator):
         """Initialize the VeSync outlet device."""
-        super().__init__(plug)
+        super().__init__(plug, coordinator)
         self.smartplug = plug
 
     @property
@@ -73,6 +82,10 @@ class VeSyncOutletSensorEntity(VeSyncBaseEntity, SensorEntity):
 
 class VeSyncPowerSensor(VeSyncOutletSensorEntity):
     """Representation of current power use for a VeSync outlet."""
+
+    def __init__(self, plug, coordinator):
+        """Initialize the VeSync outlet device."""
+        super().__init__(plug, coordinator)
 
     @property
     def unique_id(self):
@@ -113,9 +126,9 @@ class VeSyncPowerSensor(VeSyncOutletSensorEntity):
 class VeSyncEnergySensor(VeSyncOutletSensorEntity):
     """Representation of current day's energy use for a VeSync outlet."""
 
-    def __init__(self, plug):
+    def __init__(self, plug, coordinator):
         """Initialize the VeSync outlet device."""
-        super().__init__(plug)
+        super().__init__(plug, coordinator)
         self.smartplug = plug
 
     @property
@@ -157,9 +170,9 @@ class VeSyncEnergySensor(VeSyncOutletSensorEntity):
 class VeSyncHumidifierSensorEntity(VeSyncBaseEntity, SensorEntity):
     """Representation of a sensor describing diagnostics of a VeSync humidifier."""
 
-    def __init__(self, humidifier):
+    def __init__(self, humidifier, coordinator):
         """Initialize the VeSync humidifier device."""
-        super().__init__(humidifier)
+        super().__init__(humidifier, coordinator)
         self.smarthumidifier = humidifier
 
     @property
@@ -173,6 +186,10 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
 
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_device_class = SensorDeviceClass.AQI
+
+    def __init__(self, plug, coordinator):
+        """Initialize the VeSync outlet device."""
+        super().__init__(plug, coordinator)
 
     @property
     def unique_id(self):
@@ -197,6 +214,10 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
 
 class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
     """Representation of a filter life sensor."""
+
+    def __init__(self, plug, coordinator):
+        """Initialize the VeSync outlet device."""
+        super().__init__(plug, coordinator)
 
     @property
     def unique_id(self):
@@ -244,6 +265,10 @@ class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
 
 class VeSyncHumiditySensor(VeSyncHumidifierSensorEntity):
     """Representation of current humidity for a VeSync humidifier."""
+
+    def __init__(self, humidity, coordinator):
+        """Initialize the VeSync outlet device."""
+        super().__init__(humidity, coordinator)
 
     @property
     def unique_id(self):

@@ -1,11 +1,13 @@
 """VeSync integration."""
 import logging
+from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from pyvesync.vesync import VeSync
 
 from .common import async_process_devices
@@ -53,12 +55,34 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         _LOGGER.error("Unable to login to the VeSync server")
         return False
 
-    device_dict = await async_process_devices(hass, manager)
-
     forward_setup = hass.config_entries.async_forward_entry_setup
 
     hass.data[DOMAIN] = {config_entry.entry_id: {}}
     hass.data[DOMAIN][config_entry.entry_id][VS_MANAGER] = manager
+
+    # Create a DataUpdateCoordinator for the manager
+    async def async_update_data():
+        """Fetch data from API endpoint."""
+        try:
+            await hass.async_add_executor_job(manager.update)
+        except Exception as err:
+            raise UpdateFailed(f"Update failed: {err}")
+
+    coordinator = DataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        name="vesync",
+        update_method=async_update_data,
+        update_interval=timedelta(seconds=30),
+    )
+
+    # Fetch initial data so we have data when entities subscribe
+    await coordinator.async_refresh()
+
+    # Store the coordinator instance in hass.data
+    hass.data[DOMAIN][config_entry.entry_id]["coordinator"] = coordinator
+
+    device_dict = await async_process_devices(hass, manager)
 
     for p, vs_p in PLATFORMS.items():
         hass.data[DOMAIN][config_entry.entry_id][vs_p] = []

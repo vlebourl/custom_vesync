@@ -3,6 +3,7 @@ import logging
 
 from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.helpers.entity import Entity, ToggleEntity
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from pyvesync.vesyncfan import model_features
 
 from .const import (
@@ -48,7 +49,6 @@ async def async_process_devices(hass, manager):
         VS_BINARY_SENSORS: [],
     }
 
-    await hass.async_add_executor_job(manager.update)
     redacted = async_redact_data(
         {k: [d.__dict__ for d in v] for k, v in manager._dev_list.items()},
         ["cid", "uuid", "mac_id"],
@@ -105,12 +105,13 @@ async def async_process_devices(hass, manager):
     return devices
 
 
-class VeSyncBaseEntity(Entity):
+class VeSyncBaseEntity(CoordinatorEntity, Entity):
     """Base class for VeSync Entity Representations."""
 
-    def __init__(self, device):
+    def __init__(self, device, coordinator):
         """Initialize the VeSync device."""
         self.device = device
+        super().__init__(coordinator, context=device)
 
     @property
     def base_unique_id(self):
@@ -152,13 +153,19 @@ class VeSyncBaseEntity(Entity):
             "sw_version": self.device.current_firm_version,
         }
 
-    def update(self):
-        """Update vesync device."""
-        self.device.update()
+    async def async_added_to_hass(self):
+        """When entity is added to hass."""
+        self.async_on_remove(
+            self.coordinator.async_add_listener(self.async_write_ha_state)
+        )
 
 
 class VeSyncDevice(VeSyncBaseEntity, ToggleEntity):
     """Base class for VeSync Device Representations."""
+
+    def __init__(self, device, coordinator):
+        """Initialize the VeSync device."""
+        super().__init__(device, coordinator)
 
     @property
     def is_on(self):

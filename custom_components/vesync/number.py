@@ -23,33 +23,37 @@ async def async_setup_entry(
 ) -> None:
     """Set up numbers."""
 
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
+
     @callback
     def discover(devices):
         """Add new devices to platform."""
-        _setup_entities(devices, async_add_entities)
+        _setup_entities(devices, async_add_entities, coordinator)
 
     config_entry.async_on_unload(
         async_dispatcher_connect(hass, VS_DISCOVERY.format(VS_NUMBERS), discover)
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_NUMBERS], async_add_entities
+        hass.data[DOMAIN][config_entry.entry_id][VS_NUMBERS],
+        async_add_entities,
+        coordinator,
     )
 
 
 @callback
-def _setup_entities(devices, async_add_entities):
+def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
         if has_feature(dev, "details", "mist_virtual_level"):
-            entities.append(VeSyncHumidifierMistLevelHA(dev))
+            entities.append(VeSyncHumidifierMistLevelHA(dev, coordinator))
         if has_feature(dev, "config", "auto_target_humidity"):
-            entities.append(VeSyncHumidifierTargetLevelHA(dev))
+            entities.append(VeSyncHumidifierTargetLevelHA(dev, coordinator))
         if has_feature(dev, "details", "warm_mist_level"):
-            entities.append(VeSyncHumidifierWarmthLevelHA(dev))
+            entities.append(VeSyncHumidifierWarmthLevelHA(dev, coordinator))
         if has_feature(dev, "config_dict", "levels"):
-            entities.append(VeSyncFanSpeedLevelHA(dev))
+            entities.append(VeSyncFanSpeedLevelHA(dev, coordinator))
 
     async_add_entities(entities, update_before_add=True)
 
@@ -57,9 +61,9 @@ def _setup_entities(devices, async_add_entities):
 class VeSyncNumberEntity(VeSyncBaseEntity, NumberEntity):
     """Representation of a number for configuring a VeSync fan."""
 
-    def __init__(self, device):
+    def __init__(self, device, coordinator):
         """Initialize the VeSync fan device."""
-        super().__init__(device)
+        super().__init__(device, coordinator)
 
     @property
     def entity_category(self):
@@ -70,9 +74,9 @@ class VeSyncNumberEntity(VeSyncBaseEntity, NumberEntity):
 class VeSyncFanSpeedLevelHA(VeSyncNumberEntity):
     """Representation of the fan speed level of a VeSync fan."""
 
-    def __init__(self, device):
+    def __init__(self, device, coordinator):
         """Initialize the number entity."""
-        super().__init__(device)
+        super().__init__(device, coordinator)
         self._attr_native_min_value = device.config_dict["levels"][0]
         self._attr_native_max_value = device.config_dict["levels"][-1]
         self._attr_native_step = 1
@@ -105,9 +109,9 @@ class VeSyncFanSpeedLevelHA(VeSyncNumberEntity):
 class VeSyncHumidifierMistLevelHA(VeSyncNumberEntity):
     """Representation of the mist level of a VeSync humidifier."""
 
-    def __init__(self, device):
+    def __init__(self, device, coordinator):
         """Initialize the number entity."""
-        super().__init__(device)
+        super().__init__(device, coordinator)
         self._attr_native_min_value = device.config_dict["mist_levels"][0]
         self._attr_native_max_value = device.config_dict["mist_levels"][-1]
         self._attr_native_step = 1
@@ -140,9 +144,9 @@ class VeSyncHumidifierMistLevelHA(VeSyncNumberEntity):
 class VeSyncHumidifierWarmthLevelHA(VeSyncNumberEntity):
     """Representation of the warmth level of a VeSync humidifier."""
 
-    def __init__(self, device):
+    def __init__(self, device, coordinator):
         """Initialize the number entity."""
-        super().__init__(device)
+        super().__init__(device, coordinator)
         self._attr_native_min_value = device.config_dict["warm_mist_levels"][0]
         self._attr_native_max_value = device.config_dict["warm_mist_levels"][-1]
         self._attr_native_step = 1
@@ -175,9 +179,9 @@ class VeSyncHumidifierWarmthLevelHA(VeSyncNumberEntity):
 class VeSyncHumidifierTargetLevelHA(VeSyncNumberEntity):
     """Representation of the target humidity level of a VeSync humidifier."""
 
-    def __init__(self, device):
+    def __init__(self, device, coordinator):
         """Initialize the number entity."""
-        super().__init__(device)
+        super().__init__(device, coordinator)
         self._attr_native_min_value = MIN_HUMIDITY
         self._attr_native_max_value = MAX_HUMIDITY
         self._attr_native_step = 1

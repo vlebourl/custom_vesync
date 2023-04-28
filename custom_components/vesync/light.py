@@ -27,31 +27,35 @@ async def async_setup_entry(
 ) -> None:
     """Set up lights."""
 
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
+
     @callback
     def discover(devices):
         """Add new devices to platform."""
-        _setup_entities(devices, async_add_entities)
+        _setup_entities(devices, async_add_entities, coordinator)
 
     config_entry.async_on_unload(
         async_dispatcher_connect(hass, VS_DISCOVERY.format(VS_LIGHTS), discover)
     )
 
     _setup_entities(
-        hass.data[DOMAIN][config_entry.entry_id][VS_LIGHTS], async_add_entities
+        hass.data[DOMAIN][config_entry.entry_id][VS_LIGHTS],
+        async_add_entities,
+        coordinator,
     )
 
 
 @callback
-def _setup_entities(devices, async_add_entities):
+def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
         if DEV_TYPE_TO_HA.get(dev.device_type) in ("walldimmer", "bulb-dimmable"):
-            entities.append(VeSyncDimmableLightHA(dev))
+            entities.append(VeSyncDimmableLightHA(dev, coordinator))
         if DEV_TYPE_TO_HA.get(dev.device_type) in ("bulb-tunable-white",):
-            entities.append(VeSyncTunableWhiteLightHA(dev))
+            entities.append(VeSyncTunableWhiteLightHA(dev, coordinator))
         if hasattr(dev, "night_light") and dev.night_light:
-            entities.append(VeSyncNightLightHA(dev))
+            entities.append(VeSyncNightLightHA(dev, coordinator))
 
     async_add_entities(entities, update_before_add=True)
 
@@ -83,6 +87,10 @@ def _ha_brightness_to_vesync(ha_brightness):
 
 class VeSyncBaseLight(VeSyncDevice, LightEntity):
     """Base class for VeSync Light Devices Representations."""
+
+    def __init_(self, light, coordinator):
+        """Initialize the VeSync light device."""
+        super().__init__(light, coordinator)
 
     @property
     def brightness(self):
@@ -132,6 +140,10 @@ class VeSyncBaseLight(VeSyncDevice, LightEntity):
 class VeSyncDimmableLightHA(VeSyncBaseLight, LightEntity):
     """Representation of a VeSync dimmable light device."""
 
+    def __init__(self, device, coordinator):
+        """Initialize the VeSync dimmable light device."""
+        super().__init__(device, coordinator)
+
     @property
     def color_mode(self):
         """Set color mode for this entity."""
@@ -145,6 +157,10 @@ class VeSyncDimmableLightHA(VeSyncBaseLight, LightEntity):
 
 class VeSyncTunableWhiteLightHA(VeSyncBaseLight, LightEntity):
     """Representation of a VeSync Tunable White Light device."""
+
+    def __init__(self, device, coordinator):
+        """Initialize the VeSync Tunable White Light device."""
+        super().__init__(device, coordinator)
 
     @property
     def color_temp(self):
@@ -197,9 +213,9 @@ class VeSyncTunableWhiteLightHA(VeSyncBaseLight, LightEntity):
 class VeSyncNightLightHA(VeSyncDimmableLightHA):
     """Representation of the night light on a VeSync device."""
 
-    def __init__(self, device):
+    def __init__(self, device, coordinator):
         """Initialize the VeSync device."""
-        super().__init__(device)
+        super().__init__(device, coordinator)
         self.device = device
         self.has_brightness = has_feature(
             self.device, "details", "night_light_brightness"

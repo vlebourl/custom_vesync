@@ -206,6 +206,7 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     @property
     def options(self):
         """Return the air quality options."""
+        # Note that while the manual (https://cdn.accentuate.io/4847302017112/1617079386388/02.00_M1_LV-H131-RWH-Grayscale_2021-03-02_US_en-revised.pdf?v=0) specifies the top air quality as "very good" the API actually reports "Excellent".
         return ["Excellent", "Good", "Moderate", "Bad"]
 
     @property

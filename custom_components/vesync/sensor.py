@@ -211,8 +211,8 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
 
     @property
     def state_class(self):
-        """Return the measurement state class."""
-        return SensorStateClass.MEASUREMENT
+        """Return the none state class."""
+        return None
 
     @property
     def native_value(self):

@@ -184,9 +184,6 @@ class VeSyncHumidifierSensorEntity(VeSyncBaseEntity, SensorEntity):
 class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     """Representation of an air quality sensor."""
 
-    _attr_state_class = SensorStateClass.MEASUREMENT
-    _attr_device_class = SensorDeviceClass.AQI
-
     def __init__(self, plug, coordinator):
         """Initialize the VeSync outlet device."""
         super().__init__(plug, coordinator)
@@ -200,6 +197,21 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     def name(self):
         """Return sensor name."""
         return f"{super().name} air quality"
+
+    @property
+    def device_class(self):
+        """Return the air quality device class."""
+        return SensorDeviceClass.ENUM
+    
+    @property
+    def options(self):
+        """Return the air quality options."""
+        return ["Excellent", "Good", "Moderate", "Bad"]
+
+    @property
+    def state_class(self):
+        """Return the measurement state class."""
+        return SensorStateClass.MEASUREMENT
 
     @property
     def native_value(self):

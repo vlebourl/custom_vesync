@@ -26,6 +26,7 @@ VS_TO_HA_ATTRIBUTES = {"humidity": "current_humidity"}
 
 VS_FAN_TYPES = ["VeSyncAirBypass", "VeSyncAir131"]
 VS_HUMIDIFIERS_TYPES = ["VeSyncHumid200300S", "VeSyncHumid200S"]
+VS_AIRFRYER_TYPES = ["VeSyncAirFryer158"]
 
 DEV_TYPE_TO_HA = {
     "ESL100": "bulb-dimmable",

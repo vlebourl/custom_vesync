@@ -97,8 +97,13 @@ async def async_process_devices(hass, manager):
 
     if manager.kitchen:
         for airfryer in manager.kitchen:
-            if kitchen_model_features(airfryer.device_type)["module"] in VS_AIRFRYER_TYPES:
-                _LOGGER.warning("Found air fryer %s, support in progress.\n%s", airfryer.device_name)
+            if (
+                kitchen_model_features(airfryer.device_type)["module"]
+                in VS_AIRFRYER_TYPES
+            ):
+                _LOGGER.warning(
+                    "Found air fryer %s, support in progress.\n%s", airfryer.device_name
+                )
             else:
                 _LOGGER.warning(
                     "Unknown device type %s %s (enable debug for more info)",

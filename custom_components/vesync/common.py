@@ -140,7 +140,12 @@ class VeSyncBaseEntity(CoordinatorEntity, Entity):
     @property
     def available(self) -> bool:
         """Return True if device is available."""
-        return self.device.connection_status == "online"
+        # Some devices do not report connection status, so we assume they are online
+        return (
+            self.device.connection_status == "online"
+            if self.device.connection_status
+            else True
+        )
 
     @property
     def device_info(self):

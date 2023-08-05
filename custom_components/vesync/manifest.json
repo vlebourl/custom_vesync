@@ -13,5 +13,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/vlebourl/custom_vesync",
   "requirements": ["pyvesync==2.1.7"],
-  "version": "1.0.0"
+  "version": "1.0.2"
 }

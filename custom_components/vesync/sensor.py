@@ -59,7 +59,12 @@ def _setup_entities(devices, async_add_entities, coordinator):
         if has_feature(dev, "details", "humidity"):
             entities.append(VeSyncHumiditySensor(dev, coordinator))
         if has_feature(dev, "details", "air_quality"):
-            entities.append(VeSyncAirQualitySensor(dev, coordinator))
+            entities.extend(
+                (
+                    VeSyncAirQualitySensor(dev, coordinator),
+                    VeSyncAirQualityValueSensor(dev, coordinator),
+                )
+            )
         if has_feature(dev, "details", "filter_life"):
             entities.append(VeSyncFilterLifeSensor(dev, coordinator))
 
@@ -185,11 +190,18 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     """Representation of an air quality sensor."""
 
     _attr_state_class = SensorStateClass.MEASUREMENT
-    _attr_device_class = SensorDeviceClass.AQI
 
     def __init__(self, device, coordinator):
         """Initialize the VeSync device."""
         super().__init__(device, coordinator)
+        self._numeric_quality = None
+        if self.native_value is not None:
+            self._numeric_quality = isinstance(self.native_value, (int, float))
+
+    @property
+    def device_class(self):
+        """Return the air quality device class."""
+        return SensorDeviceClass.AQI if self._numeric_quality else None
 
     @property
     def unique_id(self):
@@ -204,18 +216,50 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     @property
     def native_value(self):
         """Return the air quality index."""
-        feature_keys = ["air_quality_value", "air_quality"]
-        for key in feature_keys:
-            if has_feature(self.smarthumidifier, "details", key):
-                quality = self.smarthumidifier.details[key]
-                if isinstance(quality, (int, float)):
-                    return quality
-                _LOGGER.warn(
-                    "Got non numeric value for AQI sensor from '%s' for %s: %s",
-                    key,
-                    self.name,
-                    quality,
-                )
+        if has_feature(self.smarthumidifier, "details", "air_quality"):
+            quality = self.smarthumidifier.details["air_quality"]
+            if isinstance(quality, (int, float)):
+                return quality
+            _LOGGER.warn(
+                "Got non numeric value for AQI sensor from 'air_quality' for %s: %s",
+                self.name,
+                quality,
+            )
+        _LOGGER.warn("No air quality index found in '%s'", self.name)
+        return None
+
+
+class VeSyncAirQualityValueSensor(VeSyncHumidifierSensorEntity):
+    """Representation of an air quality sensor."""
+
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(self, device, coordinator):
+        """Initialize the VeSync device."""
+        super().__init__(device, coordinator)
+
+    @property
+    def unique_id(self):
+        """Return unique ID for air quality sensor on device."""
+        return f"{super().unique_id}-air-quality-value"
+
+    @property
+    def name(self):
+        """Return sensor name."""
+        return f"{super().name} air quality value"
+
+    @property
+    def native_value(self):
+        """Return the air quality index."""
+        if has_feature(self.smarthumidifier, "details", "air_quality_value"):
+            quality_value = self.smarthumidifier.details["air_quality_value"]
+            if isinstance(quality_value, (int, float)):
+                return quality_value
+            _LOGGER.warn(
+                "Got non numeric value for AQI sensor from 'air_quality_value' for %s: %s",
+                self.name,
+                quality_value,
+            )
         _LOGGER.warn("No air quality value found in '%s'", self.name)
         return None
 

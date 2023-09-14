@@ -210,8 +210,13 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
                 quality = self.smarthumidifier.details[key]
                 if isinstance(quality, (int, float)):
                     return quality
-                _LOGGER.warn("Got non numeric value for AQI sensor from '%s' for %s: %s", key, self.name, quality)
-        _LOGGER.warn("No air quality value found in '%s'", self.name")
+                _LOGGER.warn(
+                    "Got non numeric value for AQI sensor from '%s' for %s: %s",
+                    key,
+                    self.name,
+                    quality,
+                )
+        _LOGGER.warn("No air quality value found in '%s'", self.name)
         return None
 
 

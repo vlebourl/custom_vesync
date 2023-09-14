@@ -59,12 +59,9 @@ def _setup_entities(devices, async_add_entities, coordinator):
         if has_feature(dev, "details", "humidity"):
             entities.append(VeSyncHumiditySensor(dev, coordinator))
         if has_feature(dev, "details", "air_quality"):
-            entities.extend(
-                (
-                    VeSyncAirQualitySensor(dev, coordinator),
-                    VeSyncAirQualityValueSensor(dev, coordinator),
-                )
-            )
+            entities.append(VeSyncAirQualitySensor(dev, coordinator))
+        if has_feature(dev, "details", "air_quality_value"):
+            entities.append(VeSyncAirQualityValueSensor(dev, coordinator))
         if has_feature(dev, "details", "filter_life"):
             entities.append(VeSyncFilterLifeSensor(dev, coordinator))
 
@@ -190,6 +187,7 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     """Representation of an air quality sensor."""
 
     _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = " "
 
     def __init__(self, device, coordinator):
         """Initialize the VeSync device."""
@@ -233,6 +231,8 @@ class VeSyncAirQualityValueSensor(VeSyncHumidifierSensorEntity):
     """Representation of an air quality sensor."""
 
     _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_device_class = SensorDeviceClass.AQI
+    _attr_native_unit_of_measurement = " "
 
     def __init__(self, device, coordinator):
         """Initialize the VeSync device."""

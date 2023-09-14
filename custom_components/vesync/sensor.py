@@ -188,6 +188,7 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
 
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = " "
+    _attr_icon = "mdi:air-filter"
 
     def __init__(self, device, coordinator):
         """Initialize the VeSync device."""
@@ -195,11 +196,6 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
         self._numeric_quality = None
         if self.native_value is not None:
             self._numeric_quality = isinstance(self.native_value, (int, float))
-
-    @property
-    def device_class(self):
-        """Return the air quality device class."""
-        return SensorDeviceClass.AQI if self._numeric_quality else None
 
     @property
     def unique_id(self):
@@ -231,8 +227,8 @@ class VeSyncAirQualityValueSensor(VeSyncHumidifierSensorEntity):
     """Representation of an air quality sensor."""
 
     _attr_state_class = SensorStateClass.MEASUREMENT
-    _attr_device_class = SensorDeviceClass.AQI
     _attr_native_unit_of_measurement = " "
+    _attr_icon = "mdi:air-filter"
 
     def __init__(self, device, coordinator):
         """Initialize the VeSync device."""

@@ -1,3 +1,7 @@
+# **Important message**
+> 
+> Unfortunately, I no longer have time to maintain this repo. I am therefore looking for someone to take it over before archiving it. If interested please contact me.
+
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 [![GitHub release](https://img.shields.io/github/v/release/vlebourl/custom_vesync.svg)](https://GitHub.com/vlebourl/custom_vesync/releases/)
 

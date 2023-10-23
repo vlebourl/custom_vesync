@@ -7,7 +7,14 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ENERGY_KILO_WATT_HOUR, PERCENTAGE, POWER_WATT
+from homeassistant.const import (
+    ENERGY_KILO_WATT_HOUR,
+    PERCENTAGE,
+    POWER_WATT,
+    TEMP_CELSIUS,
+    TIME_MINUTES,
+    DEVICE_CLASS_TEMPERATURE,
+)
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
@@ -17,6 +24,58 @@ from .common import VeSyncBaseEntity, has_feature
 from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_SENSORS
 
 _LOGGER = logging.getLogger(__name__)
+
+SENSOR_TYPES_CS158 = {
+    # unique_id ,#name ,# unit of measurement,# icon, # device class, #atribut read,
+    "current_temp": [
+        "current_temperature",
+        "Current temperature",
+        TEMP_CELSIUS,
+        None,
+        DEVICE_CLASS_TEMPERATURE,
+        "current_temp",
+    ],
+    "cook_set_temp": [
+        "set_temperature",
+        "Set temperature",
+        TEMP_CELSIUS,
+        None,
+        DEVICE_CLASS_TEMPERATURE,
+        "cook_set_temp",
+    ],
+    "cook_last_time": [
+        "cook_last_time",
+        "Cook Remaining",
+        TIME_MINUTES,
+        "mdi:timer",
+        TIME_MINUTES,
+        "cook_last_time",
+    ],
+    "preheat_last_time": [
+        "preheat_last_time",
+        "Preheat Remaining",
+        TIME_MINUTES,
+        "mdi:timer",
+        TIME_MINUTES,
+        "preheat_last_time",
+    ],
+    "cook_status": [
+        "cook_status",
+        "Cook Status",
+        None,
+        "mdi:rotate-3d-variant",
+        None,
+        "cook_status",
+    ],
+    "remaining_time": [
+        "remaining_time",
+        "running:",
+        TIME_MINUTES,
+        "mdi:timer",
+        TIME_MINUTES,
+        "remaining_time",
+    ],
+}
 
 
 async def async_setup_entry(
@@ -49,6 +108,16 @@ def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
+        if (dev.device_type) == "CS158-AF":
+            for stype in SENSOR_TYPES_CS158.values():
+                entities.append(
+                    VeSyncairfryerSensor(
+                        dev,
+                        coordinator,
+                        stype,
+                    )
+                )
+
         if DEV_TYPE_TO_HA.get(dev.device_type) == "outlet":
             entities.extend(
                 (
@@ -66,6 +135,44 @@ def _setup_entities(devices, async_add_entities, coordinator):
             entities.append(VeSyncFilterLifeSensor(dev, coordinator))
 
     async_add_entities(entities, update_before_add=True)
+
+
+class VeSyncairfryerSensor(VeSyncBaseEntity, SensorEntity):
+    def __init__(self, airfryer, coordinator, stype):
+        """Initialize the VeSync outlet device."""
+
+        super().__init__(airfryer, coordinator)
+        self.airfryer = airfryer
+        self.stype = stype
+
+    @property
+    def unique_id(self):
+        """Return unique ID for power sensor on device."""
+        return f"{super().unique_id}-" + self.stype[0]
+
+    @property
+    def name(self):
+        """Return sensor name."""
+        return f"{super().name}_" + self.stype[1]
+
+    @property
+    def device_class(self):
+        return self.stype[4]
+
+    @property
+    def native_value(self):
+        value = getattr(self.airfryer, self.stype[5], None)
+        return value
+
+    @property
+    def native_unit_of_measurement(self):
+        # return self.airfryer.temp_unit
+        return self.stype[2]
+
+    @property
+    def icon(self):
+        """Return the icon to use in the frontend, if any."""
+        return self.stype[3]
 
 
 class VeSyncOutletSensorEntity(VeSyncBaseEntity, SensorEntity):

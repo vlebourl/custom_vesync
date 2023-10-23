@@ -1,7 +1,7 @@
 {
   "domain": "vesync",
   "name": "VeSync",
-  "codeowners": ["@markperdue", "@webdjoe", "@thegardenmonkey", "@vlebourl"],
+  "codeowners": ["@markperdue", "@webdjoe", "@thegardenmonkey", "@vlebourl","@tv4you2016"],
   "config_flow": true,
   "dhcp": [
     {

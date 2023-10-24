@@ -2,6 +2,7 @@
 import logging
 
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -12,6 +13,17 @@ from .common import VeSyncBaseEntity, VeSyncDevice
 from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_SWITCHES
 
 _LOGGER = logging.getLogger(__name__)
+
+
+SENSOR_TYPES_CS158 = {
+    # unique_id,name # icon, #atribut read,
+    "end": [
+        "end",
+        "End cooking or preheating ",
+        "mdi:pot-steam-outline",
+        "is_running",
+    ],
+}
 
 
 async def async_setup_entry(

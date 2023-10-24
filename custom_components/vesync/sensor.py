@@ -153,7 +153,7 @@ class VeSyncairfryerSensor(VeSyncBaseEntity, SensorEntity):
     @property
     def name(self):
         """Return sensor name."""
-        return f"{super().name}_" + self.stype[1]
+        return self.stype[1]
 
     @property
     def device_class(self):

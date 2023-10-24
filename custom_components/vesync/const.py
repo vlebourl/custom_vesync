@@ -4,6 +4,7 @@ DOMAIN = "vesync"
 VS_DISCOVERY = "vesync_discovery_{}"
 SERVICE_UPDATE_DEVS = "update_devices"
 
+VS_BUTTON = "button"
 VS_SWITCHES = "switches"
 VS_FAN = "fan"
 VS_FANS = "fans"

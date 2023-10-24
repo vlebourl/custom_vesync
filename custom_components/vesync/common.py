@@ -20,6 +20,7 @@ from .const import (
     VS_NUMBERS,
     VS_SENSORS,
     VS_SWITCHES,
+    VS_BUTTON,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,6 +41,7 @@ async def async_process_devices(hass, manager):
         VS_HUMIDIFIERS: [],
         VS_NUMBERS: [],
         VS_BINARY_SENSORS: [],
+        VS_BUTTON: [],
     }
 
     redacted = async_redact_data(
@@ -107,6 +109,8 @@ async def async_process_devices(hass, manager):
                 )
                 devices[VS_SENSORS].append(airfryer)
                 devices[VS_BINARY_SENSORS].append(airfryer)
+                devices[VS_SWITCHES].append(airfryer)
+                devices[VS_BUTTON].append(airfryer)
             else:
                 _LOGGER.warning(
                     "Unknown device type %s %s (enable debug for more info)",
@@ -164,11 +168,6 @@ class VeSyncBaseEntity(CoordinatorEntity, Entity):
             "manufacturer": "VeSync",
             "sw_version": self.device.current_firm_version,
         }
-
-    @property
-    def icon(self) -> Optional[str]:
-        """Return the icon to use in the frontend, if any."""
-        return self._icon
 
     async def async_added_to_hass(self):
         """When entity is added to hass."""

@@ -100,7 +100,7 @@ class VeSyncairfryerSensor(VeSyncBaseEntity, BinarySensorEntity):
     @property
     def name(self):
         """Return sensor name."""
-        return f"{super().name}_" + self.stype[1]
+        return self.stype[1]
 
     @property
     def is_on(self) -> bool:

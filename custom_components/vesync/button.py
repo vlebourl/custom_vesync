@@ -1,16 +1,14 @@
 """Support for VeSync button."""
 import logging
 
-
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .common import VeSyncBaseEntity
-from .const import DOMAIN, VS_DISCOVERY, VS_BUTTON
+from .const import DOMAIN, VS_BUTTON, VS_DISCOVERY
 
 _LOGGER = logging.getLogger(__name__)
 

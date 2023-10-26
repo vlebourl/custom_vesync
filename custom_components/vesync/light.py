@@ -140,7 +140,7 @@ class VeSyncBaseLight(VeSyncDevice, LightEntity):
 class VeSyncDimmableLightHA(VeSyncBaseLight, LightEntity):
     """Representation of a VeSync dimmable light device."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the VeSync dimmable light device."""
         super().__init__(device, coordinator)
 
@@ -158,7 +158,7 @@ class VeSyncDimmableLightHA(VeSyncBaseLight, LightEntity):
 class VeSyncTunableWhiteLightHA(VeSyncBaseLight, LightEntity):
     """Representation of a VeSync Tunable White Light device."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the VeSync Tunable White Light device."""
         super().__init__(device, coordinator)
 
@@ -213,7 +213,7 @@ class VeSyncTunableWhiteLightHA(VeSyncBaseLight, LightEntity):
 class VeSyncNightLightHA(VeSyncDimmableLightHA):
     """Representation of the night light on a VeSync device."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the VeSync device."""
         super().__init__(device, coordinator)
         self.device = device

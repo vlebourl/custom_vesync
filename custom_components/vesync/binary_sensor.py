@@ -9,7 +9,7 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .common import VeSyncBaseEntity, has_feature
-from .const import DOMAIN, VS_BINARY_SENSORS, VS_DISCOVERY
+from .const import BINARY_SENSOR_TYPES_AIRFRYER, DOMAIN, VS_BINARY_SENSORS, VS_DISCOVERY
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,6 +44,15 @@ def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
+        if hasattr(dev, "fryer_status"):
+            for stype in BINARY_SENSOR_TYPES_AIRFRYER.values():
+                entities.append(
+                    VeSyncairfryerSensor(
+                        dev,
+                        coordinator,
+                        stype,
+                    )
+                )
         if has_feature(dev, "details", "water_lacks"):
             entities.append(VeSyncOutOfWaterSensor(dev, coordinator))
         if has_feature(dev, "details", "water_tank_lifted"):
@@ -52,10 +61,47 @@ def _setup_entities(devices, async_add_entities, coordinator):
     async_add_entities(entities, update_before_add=True)
 
 
+class VeSyncairfryerSensor(VeSyncBaseEntity, BinarySensorEntity):
+    """Class representing a VeSyncairfryerSensor."""
+
+    def __init__(self, airfryer, coordinator, stype) -> None:
+        """Initialize the VeSync humidifier device."""
+        super().__init__(airfryer, coordinator)
+        self.airfryer = airfryer
+        self.stype = stype
+
+    @property
+    def entity_category(self):
+        """Return the diagnostic entity category."""
+        return EntityCategory.DIAGNOSTIC
+
+    @property
+    def unique_id(self):
+        """Return unique ID for water tank lifted sensor on device."""
+        return f"{super().unique_id}-" + self.stype[0]
+
+    @property
+    def name(self):
+        """Return sensor name."""
+        return self.stype[1]
+
+    @property
+    def is_on(self) -> bool:
+        """Return a value indicating whether the Humidifier's water tank is lifted."""
+        value = getattr(self.airfryer, self.stype[0], None)
+        return value
+        # return self.smarthumidifier.details["water_tank_lifted"]
+
+    @property
+    def icon(self):
+        """Return the icon to use in the frontend, if any."""
+        return self.stype[2]
+
+
 class VeSyncBinarySensorEntity(VeSyncBaseEntity, BinarySensorEntity):
     """Representation of a binary sensor describing diagnostics of a VeSync humidifier."""
 
-    def __init__(self, humidifier, coordinator):
+    def __init__(self, humidifier, coordinator) -> None:
         """Initialize the VeSync humidifier device."""
         super().__init__(humidifier, coordinator)
         self.smarthumidifier = humidifier

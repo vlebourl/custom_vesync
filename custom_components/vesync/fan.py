@@ -62,7 +62,7 @@ def _setup_entities(devices, async_add_entities, coordinator):
 class VeSyncFanHA(VeSyncDevice, FanEntity):
     """Representation of a VeSync fan."""
 
-    def __init__(self, fan, coordinator):
+    def __init__(self, fan, coordinator) -> None:
         """Initialize the VeSync fan device."""
         super().__init__(fan, coordinator)
         self.smartfan = fan

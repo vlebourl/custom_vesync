@@ -9,28 +9,9 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .common import VeSyncBaseEntity, has_feature
-from .const import DOMAIN, VS_BINARY_SENSORS, VS_DISCOVERY
+from .const import DOMAIN, VS_BINARY_SENSORS, VS_DISCOVERY, BINARY_SENSOR_TYPES_AIRFRYER
 
 _LOGGER = logging.getLogger(__name__)
-
-SENSOR_TYPES_CS158 = {
-    # unique_id,name # icon, #atribut read,
-    "is_heating": [
-        "is_heating",
-        "preheating",
-        "mdi:pot-steam-outline",
-    ],
-    "is_cooking": [
-        "is_cooking",
-        "cooking",
-        "mdi:rice",
-    ],
-    "is_running": [
-        "is_running",
-        "running",
-        "mdi:pause",
-    ],
-}
 
 
 async def async_setup_entry(
@@ -63,8 +44,8 @@ def _setup_entities(devices, async_add_entities, coordinator):
     """Check if device is online and add entity."""
     entities = []
     for dev in devices:
-        if (dev.device_type) == "CS158-AF":
-            for stype in SENSOR_TYPES_CS158.values():
+        if hasattr(dev, "fryer_status"):
+            for stype in BINARY_SENSOR_TYPES_AIRFRYER.values():
                 entities.append(
                     VeSyncairfryerSensor(
                         dev,

@@ -15,16 +15,6 @@ from .const import DEV_TYPE_TO_HA, DOMAIN, VS_DISCOVERY, VS_SWITCHES
 _LOGGER = logging.getLogger(__name__)
 
 
-SENSOR_TYPES_CS158 = {
-    # unique_id,name # icon, #atribut read,
-    "end": [
-        "end",
-        "End cooking or preheating ",
-        "mdi:pot-steam-outline",
-        "is_running",
-    ],
-}
-
 
 async def async_setup_entry(
     hass: HomeAssistant,

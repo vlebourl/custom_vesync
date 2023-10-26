@@ -56,15 +56,14 @@ def _setup_entities(devices, async_add_entities, coordinator):
     entities = []
     for dev in devices:
         if hasattr(dev, "fryer_status"):
-            for stype in SENSOR_TYPES_AIRFRYER.values():
-                entities.append(
-                    VeSyncairfryerSensor(
-                        dev,
-                        coordinator,
-                        stype,
-                    )
+            entities.extend(
+                VeSyncairfryerSensor(
+                    dev,
+                    coordinator,
+                    stype,
                 )
-
+                for stype in SENSOR_TYPES_AIRFRYER.values()
+            )
         if DEV_TYPE_TO_HA.get(dev.device_type) == "outlet":
             entities.extend(
                 (
@@ -96,7 +95,7 @@ class VeSyncairfryerSensor(VeSyncBaseEntity, SensorEntity):
     @property
     def unique_id(self):
         """Return unique ID for power sensor on device."""
-        return f"{super().unique_id}-" + self.stype[0]
+        return f"{super().unique_id}-{self.stype[0]}"
 
     @property
     def name(self):
@@ -111,8 +110,7 @@ class VeSyncairfryerSensor(VeSyncBaseEntity, SensorEntity):
     @property
     def native_value(self):
         """Return the value."""
-        value = getattr(self.airfryer, self.stype[5], None)
-        return value
+        return getattr(self.airfryer, self.stype[5], None)
 
     @property
     def native_unit_of_measurement(self):

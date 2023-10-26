@@ -52,7 +52,7 @@ DEV_TYPE_TO_HA = {
 
 
 BINARY_SENSOR_TYPES_AIRFRYER = {
-    # unique_id,name # icon, #atribut read,
+    # unique_id,name # icon, #attribute read,
     "is_heating": [
         "is_heating",
         "preheating",
@@ -72,7 +72,7 @@ BINARY_SENSOR_TYPES_AIRFRYER = {
 
 
 SENSOR_TYPES_AIRFRYER = {
-    # unique_id ,#name ,# unit of measurement,# icon, # device class, #atribut read,
+    # unique_id ,#name ,# unit of measurement,# icon, # device class, #attribute read,
     "current_temp": [
         "current_temperature",
         "Current temperature",

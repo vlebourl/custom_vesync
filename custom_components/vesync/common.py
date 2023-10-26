@@ -1,6 +1,5 @@
 """Common utilities for VeSync Component."""
 import logging
-from typing import Optional
 
 from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.helpers.entity import Entity, ToggleEntity
@@ -124,7 +123,7 @@ async def async_process_devices(hass, manager):
 class VeSyncBaseEntity(CoordinatorEntity, Entity):
     """Base class for VeSync Entity Representations."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the VeSync device."""
         self.device = device
         super().__init__(coordinator, context=device)
@@ -179,7 +178,7 @@ class VeSyncBaseEntity(CoordinatorEntity, Entity):
 class VeSyncDevice(VeSyncBaseEntity, ToggleEntity):
     """Base class for VeSync Device Representations."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the VeSync device."""
         super().__init__(device, coordinator)
 

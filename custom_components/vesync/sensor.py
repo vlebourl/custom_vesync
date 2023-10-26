@@ -89,7 +89,7 @@ def _setup_entities(devices, async_add_entities, coordinator):
 
 
 class VeSyncairfryerSensor(VeSyncBaseEntity, SensorEntity):
-    def __init__(self, airfryer, coordinator, stype):
+    def __init__(self, airfryer, coordinator, stype) -> None:
         """Initialize the VeSync outlet device."""
 
         super().__init__(airfryer, coordinator)
@@ -129,7 +129,7 @@ class VeSyncairfryerSensor(VeSyncBaseEntity, SensorEntity):
 class VeSyncOutletSensorEntity(VeSyncBaseEntity, SensorEntity):
     """Representation of a sensor describing diagnostics of a VeSync outlet."""
 
-    def __init__(self, plug, coordinator):
+    def __init__(self, plug, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(plug, coordinator)
         self.smartplug = plug
@@ -143,7 +143,7 @@ class VeSyncOutletSensorEntity(VeSyncBaseEntity, SensorEntity):
 class VeSyncPowerSensor(VeSyncOutletSensorEntity):
     """Representation of current power use for a VeSync outlet."""
 
-    def __init__(self, plug, coordinator):
+    def __init__(self, plug, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(plug, coordinator)
 
@@ -186,7 +186,7 @@ class VeSyncPowerSensor(VeSyncOutletSensorEntity):
 class VeSyncEnergySensor(VeSyncOutletSensorEntity):
     """Representation of current day's energy use for a VeSync outlet."""
 
-    def __init__(self, plug, coordinator):
+    def __init__(self, plug, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(plug, coordinator)
         self.smartplug = plug
@@ -230,7 +230,7 @@ class VeSyncEnergySensor(VeSyncOutletSensorEntity):
 class VeSyncHumidifierSensorEntity(VeSyncBaseEntity, SensorEntity):
     """Representation of a sensor describing diagnostics of a VeSync humidifier."""
 
-    def __init__(self, humidifier, coordinator):
+    def __init__(self, humidifier, coordinator) -> None:
         """Initialize the VeSync humidifier device."""
         super().__init__(humidifier, coordinator)
         self.smarthumidifier = humidifier
@@ -247,7 +247,7 @@ class VeSyncAirQualitySensor(VeSyncHumidifierSensorEntity):
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = " "
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the VeSync device."""
         super().__init__(device, coordinator)
         self._numeric_quality = None
@@ -292,7 +292,7 @@ class VeSyncAirQualityValueSensor(VeSyncHumidifierSensorEntity):
     _attr_device_class = SensorDeviceClass.AQI
     _attr_native_unit_of_measurement = " "
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the VeSync device."""
         super().__init__(device, coordinator)
 
@@ -325,7 +325,7 @@ class VeSyncAirQualityValueSensor(VeSyncHumidifierSensorEntity):
 class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
     """Representation of a filter life sensor."""
 
-    def __init__(self, plug, coordinator):
+    def __init__(self, plug, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(plug, coordinator)
 
@@ -376,7 +376,7 @@ class VeSyncFilterLifeSensor(VeSyncHumidifierSensorEntity):
 class VeSyncHumiditySensor(VeSyncHumidifierSensorEntity):
     """Representation of current humidity for a VeSync humidifier."""
 
-    def __init__(self, humidity, coordinator):
+    def __init__(self, humidity, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(humidity, coordinator)
 

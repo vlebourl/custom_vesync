@@ -8,7 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 # from .common import is_humidifier
-from .const import DOMAIN
+# from .const import DOMAIN
 
 TO_REDACT = {"cid", "uuid", "mac_id"}
 
@@ -17,7 +17,7 @@ async def async_get_config_entry_diagnostics(
     hass: HomeAssistant, entry: ConfigEntry
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
-    data = hass.data[DOMAIN][entry.entry_id]
+    # data = hass.data[DOMAIN][entry.entry_id]
     devices = {}
 
     # for type in ["fans", "outlets", "switches", "bulbs"]:

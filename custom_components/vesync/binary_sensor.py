@@ -62,7 +62,7 @@ def _setup_entities(devices, async_add_entities, coordinator):
 
 
 class VeSyncairfryerSensor(VeSyncBaseEntity, BinarySensorEntity):
-    def __init__(self, airfryer, coordinator, stype):
+    def __init__(self, airfryer, coordinator, stype) -> None:
         """Initialize the VeSync humidifier device."""
         super().__init__(airfryer, coordinator)
         self.airfryer = airfryer
@@ -99,7 +99,7 @@ class VeSyncairfryerSensor(VeSyncBaseEntity, BinarySensorEntity):
 class VeSyncBinarySensorEntity(VeSyncBaseEntity, BinarySensorEntity):
     """Representation of a binary sensor describing diagnostics of a VeSync humidifier."""
 
-    def __init__(self, humidifier, coordinator):
+    def __init__(self, humidifier, coordinator) -> None:
         """Initialize the VeSync humidifier device."""
         super().__init__(humidifier, coordinator)
         self.smarthumidifier = humidifier

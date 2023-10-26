@@ -6,7 +6,7 @@ from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.helpers.entity import EntityCategory
+
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .common import VeSyncBaseEntity
@@ -71,7 +71,7 @@ def _setup_entities(devices, async_add_entities, coordinator):
 class VeSyncairfryerButton(VeSyncBaseEntity, ButtonEntity):
     """Base class for VeSync switch Device Representations."""
 
-    def __init__(self, airfryer, coordinator, stype):
+    def __init__(self, airfryer, coordinator, stype) -> None:
         """Initialize the VeSync humidifier device."""
         super().__init__(airfryer, coordinator)
         self.airfryer = airfryer

@@ -45,14 +45,14 @@ def _setup_entities(devices, async_add_entities, coordinator):
     entities = []
     for dev in devices:
         if hasattr(dev, "fryer_status"):
-            for stype in BINARY_SENSOR_TYPES_AIRFRYER.values():
-                entities.append(
-                    VeSyncairfryerSensor(
-                        dev,
-                        coordinator,
-                        stype,
-                    )
+            entities.extend(
+                VeSyncairfryerSensor(
+                    dev,
+                    coordinator,
+                    stype,
                 )
+                for stype in BINARY_SENSOR_TYPES_AIRFRYER.values()
+            )
         if has_feature(dev, "details", "water_lacks"):
             entities.append(VeSyncOutOfWaterSensor(dev, coordinator))
         if has_feature(dev, "details", "water_tank_lifted"):
@@ -76,7 +76,7 @@ class VeSyncairfryerSensor(VeSyncBaseEntity, BinarySensorEntity):
     @property
     def unique_id(self):
         """Return unique ID for water tank lifted sensor on device."""
-        return f"{super().unique_id}-" + self.stype[0]
+        return f"{super().unique_id}-{self.stype[0]}"
 
     @property
     def name(self):
@@ -86,8 +86,7 @@ class VeSyncairfryerSensor(VeSyncBaseEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         """Return a value indicating whether the Humidifier's water tank is lifted."""
-        value = getattr(self.airfryer, self.stype[0], None)
-        return value
+        return getattr(self.airfryer, self.stype[0], None)
         # return self.smarthumidifier.details["water_tank_lifted"]
 
     @property

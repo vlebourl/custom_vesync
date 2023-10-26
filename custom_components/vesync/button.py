@@ -56,15 +56,14 @@ def _setup_entities(devices, async_add_entities, coordinator):
     entities = []
     for dev in devices:
         if hasattr(dev, "cook_set_temp"):
-            for stype in SENSOR_TYPES_CS158.values():
-                entities.append(
-                    VeSyncairfryerButton(
-                        dev,
-                        coordinator,
-                        stype,
-                    )
+            entities.extend(
+                VeSyncairfryerButton(
+                    dev,
+                    coordinator,
+                    stype,
                 )
-
+                for stype in SENSOR_TYPES_CS158.values()
+            )
     async_add_entities(entities, update_before_add=True)
 
 
@@ -80,7 +79,7 @@ class VeSyncairfryerButton(VeSyncBaseEntity, ButtonEntity):
     @property
     def unique_id(self):
         """Return unique ID for water tank lifted sensor on device."""
-        return f"{super().unique_id}-" + self.stype[0]
+        return f"{super().unique_id}-{self.stype[0]}"
 
     @property
     def name(self):

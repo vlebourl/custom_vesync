@@ -23,7 +23,6 @@ from .const import (
     VS_NUMBERS,
     VS_SENSORS,
     VS_SWITCHES,
-    VS_BUTTON,
 )
 
 PLATFORMS = {
@@ -34,7 +33,6 @@ PLATFORMS = {
     Platform.HUMIDIFIER: VS_HUMIDIFIERS,
     Platform.NUMBER: VS_NUMBERS,
     Platform.BINARY_SENSOR: VS_BINARY_SENSORS,
-    Platform.BUTTON: VS_BUTTON,
 }
 
 _LOGGER = logging.getLogger(__name__)

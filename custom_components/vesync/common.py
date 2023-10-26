@@ -4,12 +4,10 @@ import logging
 from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.helpers.entity import Entity, ToggleEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from pyvesync.vesyncfan import model_features as fan_model_features
-from pyvesync.vesynckitchen import model_features as kitchen_model_features
+from pyvesync.vesyncfan import model_features
 
 from .const import (
     DOMAIN,
-    VS_AIRFRYER_TYPES,
     VS_BINARY_SENSORS,
     VS_FAN_TYPES,
     VS_FANS,
@@ -19,7 +17,6 @@ from .const import (
     VS_NUMBERS,
     VS_SENSORS,
     VS_SWITCHES,
-    VS_BUTTON,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,6 +25,16 @@ _LOGGER = logging.getLogger(__name__)
 def has_feature(device, dictionary, attribute):
     """Return the detail of the attribute."""
     return getattr(device, dictionary, {}).get(attribute, None) is not None
+
+
+def is_humidifier(device_type: str) -> bool:
+    """Return true if the device type is a humidifier."""
+    return model_features(device_type)["module"] in VS_HUMIDIFIERS_TYPES
+
+
+def is_air_purifier(device_type: str) -> bool:
+    """Return true if the device type is a an air purifier."""
+    return model_features(device_type)["module"] in VS_FAN_TYPES
 
 
 async def async_process_devices(hass, manager):
@@ -40,7 +47,6 @@ async def async_process_devices(hass, manager):
         VS_HUMIDIFIERS: [],
         VS_NUMBERS: [],
         VS_BINARY_SENSORS: [],
-        VS_BUTTON: [],
     }
 
     redacted = async_redact_data(
@@ -48,15 +54,14 @@ async def async_process_devices(hass, manager):
         ["cid", "uuid", "mac_id"],
     )
 
-    _LOGGER.warning(
+    _LOGGER.debug(
         "Found the following devices: %s",
         redacted,
     )
 
     if (
-        manager.bulbs is None
-        and manager.fans is None
-        and manager.kitchen is None
+        manager.fans is None
+        and manager.bulbs is None
         and manager.outlets is None
         and manager.switches is None
     ):
@@ -65,13 +70,13 @@ async def async_process_devices(hass, manager):
     if manager.fans:
         for fan in manager.fans:
             # VeSync classifies humidifiers as fans
-            if fan_model_features(fan.device_type)["module"] in VS_HUMIDIFIERS_TYPES:
+            if is_humidifier(fan.device_type):
                 devices[VS_HUMIDIFIERS].append(fan)
-            elif fan_model_features(fan.device_type)["module"] in VS_FAN_TYPES:
+            elif is_air_purifier(fan.device_type):
                 devices[VS_FANS].append(fan)
             else:
                 _LOGGER.warning(
-                    "Unknown fan type %s %s (enable debug for more info)",
+                    "Unknown device type %s %s (enable debug for more info)",
                     fan.device_name,
                     fan.device_type,
                 )
@@ -97,33 +102,13 @@ async def async_process_devices(hass, manager):
             else:
                 devices[VS_LIGHTS].append(switch)
 
-    if manager.kitchen:
-        for airfryer in manager.kitchen:
-            if (
-                kitchen_model_features(airfryer.device_type)["module"]
-                in VS_AIRFRYER_TYPES
-            ):
-                _LOGGER.warning(
-                    "Found air fryer %s, support in progress.\n%s", airfryer.device_name
-                )
-                devices[VS_SENSORS].append(airfryer)
-                devices[VS_BINARY_SENSORS].append(airfryer)
-                devices[VS_SWITCHES].append(airfryer)
-                devices[VS_BUTTON].append(airfryer)
-            else:
-                _LOGGER.warning(
-                    "Unknown device type %s %s (enable debug for more info)",
-                    airfryer.device_name,
-                    airfryer.device_type,
-                )
-
     return devices
 
 
 class VeSyncBaseEntity(CoordinatorEntity, Entity):
     """Base class for VeSync Entity Representations."""
 
-    def __init__(self, device, coordinator) -> None:
+    def __init__(self, device, coordinator):
         """Initialize the VeSync device."""
         self.device = device
         super().__init__(coordinator, context=device)
@@ -145,7 +130,7 @@ class VeSyncBaseEntity(CoordinatorEntity, Entity):
     @property
     def base_name(self):
         """Return the name of the device."""
-        return self.device.device_type
+        return self.device.device_name
 
     @property
     def name(self):
@@ -178,7 +163,7 @@ class VeSyncBaseEntity(CoordinatorEntity, Entity):
 class VeSyncDevice(VeSyncBaseEntity, ToggleEntity):
     """Base class for VeSync Device Representations."""
 
-    def __init__(self, device, coordinator) -> None:
+    def __init__(self, device, coordinator):
         """Initialize the VeSync device."""
         super().__init__(device, coordinator)
 

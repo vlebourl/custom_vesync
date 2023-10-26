@@ -20,7 +20,7 @@ class VeSyncFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    def __init__(self) -> None:
+    def __init__(self):
         """Instantiate config flow."""
         self._username = None
         self._password = None

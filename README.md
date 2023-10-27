@@ -1,3 +1,4 @@
+
 # **Important message**
 > 
 > Unfortunately, I no longer have time to maintain this repo. I am therefore looking for someone to take it over before archiving it. If interested please contact me.
@@ -44,6 +45,13 @@ logger:
     pyvesync: debug
 ```
 
+## TODO LIST
+```
+- [x] Air Fryer Properties (AirFryer158)
+- [ ] Air Fryer Methods
+- [ ] Create the Card
+```
+
 ### Contributing
 
 All contributions are very welcomed!
@@ -54,3 +62,4 @@ pip install pre-commit
 pre-commit install
 pre-commit run --all-files
 ```
+

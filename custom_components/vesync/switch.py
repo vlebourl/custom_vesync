@@ -63,7 +63,7 @@ def _setup_entities(devices, async_add_entities, coordinator):
 class VeSyncBaseSwitch(VeSyncDevice, SwitchEntity):
     """Base class for VeSync switch Device Representations."""
 
-    def __init__(self, plug, coordinator):
+    def __init__(self, plug, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(plug, coordinator)
 
@@ -75,7 +75,7 @@ class VeSyncBaseSwitch(VeSyncDevice, SwitchEntity):
 class VeSyncSwitchHA(VeSyncBaseSwitch, SwitchEntity):
     """Representation of a VeSync switch."""
 
-    def __init__(self, plug, coordinator):
+    def __init__(self, plug, coordinator) -> None:
         """Initialize the VeSync switch device."""
         super().__init__(plug, coordinator)
         self.smartplug = plug
@@ -103,7 +103,7 @@ class VeSyncSwitchHA(VeSyncBaseSwitch, SwitchEntity):
 class VeSyncLightSwitch(VeSyncBaseSwitch, SwitchEntity):
     """Handle representation of VeSync Light Switch."""
 
-    def __init__(self, switch, coordinator):
+    def __init__(self, switch, coordinator) -> None:
         """Initialize Light Switch device class."""
         super().__init__(switch, coordinator)
         self.switch = switch
@@ -112,7 +112,7 @@ class VeSyncLightSwitch(VeSyncBaseSwitch, SwitchEntity):
 class VeSyncSwitchEntity(VeSyncBaseEntity, SwitchEntity):
     """Representation of a switch for configuring a VeSync humidifier."""
 
-    def __init__(self, humidifier, coordinator):
+    def __init__(self, humidifier, coordinator) -> None:
         """Initialize the VeSync humidifier device."""
         super().__init__(humidifier, coordinator)
         self.smarthumidifier = humidifier
@@ -126,7 +126,7 @@ class VeSyncSwitchEntity(VeSyncBaseEntity, SwitchEntity):
 class VeSyncFanChildLockHA(VeSyncSwitchEntity):
     """Representation of the child lock switch."""
 
-    def __init__(self, lock, coordinator):
+    def __init__(self, lock, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(lock, coordinator)
 
@@ -157,7 +157,7 @@ class VeSyncFanChildLockHA(VeSyncSwitchEntity):
 class VeSyncHumidifierDisplayHA(VeSyncSwitchEntity):
     """Representation of the child lock switch."""
 
-    def __init__(self, lock, coordinator):
+    def __init__(self, lock, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(lock, coordinator)
 
@@ -188,7 +188,7 @@ class VeSyncHumidifierDisplayHA(VeSyncSwitchEntity):
 class VeSyncHumidifierAutomaticStopHA(VeSyncSwitchEntity):
     """Representation of the automatic stop toggle on a VeSync humidifier."""
 
-    def __init__(self, automatic, coordinator):
+    def __init__(self, automatic, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(automatic, coordinator)
 
@@ -219,7 +219,7 @@ class VeSyncHumidifierAutomaticStopHA(VeSyncSwitchEntity):
 class VeSyncHumidifierAutoOnHA(VeSyncSwitchEntity):
     """Provide switch to turn off auto mode and set manual mist level 1 on a VeSync humidifier."""
 
-    def __init__(self, autooff, coordinator):
+    def __init__(self, autooff, coordinator) -> None:
         """Initialize the VeSync outlet device."""
         super().__init__(autooff, coordinator)
 

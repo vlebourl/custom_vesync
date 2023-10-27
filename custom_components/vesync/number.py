@@ -61,7 +61,7 @@ def _setup_entities(devices, async_add_entities, coordinator):
 class VeSyncNumberEntity(VeSyncBaseEntity, NumberEntity):
     """Representation of a number for configuring a VeSync fan."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the VeSync fan device."""
         super().__init__(device, coordinator)
 
@@ -74,7 +74,7 @@ class VeSyncNumberEntity(VeSyncBaseEntity, NumberEntity):
 class VeSyncFanSpeedLevelHA(VeSyncNumberEntity):
     """Representation of the fan speed level of a VeSync fan."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the number entity."""
         super().__init__(device, coordinator)
         self._attr_native_min_value = device.config_dict["levels"][0]
@@ -109,7 +109,7 @@ class VeSyncFanSpeedLevelHA(VeSyncNumberEntity):
 class VeSyncHumidifierMistLevelHA(VeSyncNumberEntity):
     """Representation of the mist level of a VeSync humidifier."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the number entity."""
         super().__init__(device, coordinator)
         self._attr_native_min_value = device.config_dict["mist_levels"][0]
@@ -144,7 +144,7 @@ class VeSyncHumidifierMistLevelHA(VeSyncNumberEntity):
 class VeSyncHumidifierWarmthLevelHA(VeSyncNumberEntity):
     """Representation of the warmth level of a VeSync humidifier."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the number entity."""
         super().__init__(device, coordinator)
         self._attr_native_min_value = device.config_dict["warm_mist_levels"][0]
@@ -179,7 +179,7 @@ class VeSyncHumidifierWarmthLevelHA(VeSyncNumberEntity):
 class VeSyncHumidifierTargetLevelHA(VeSyncNumberEntity):
     """Representation of the target humidity level of a VeSync humidifier."""
 
-    def __init__(self, device, coordinator):
+    def __init__(self, device, coordinator) -> None:
         """Initialize the number entity."""
         super().__init__(device, coordinator)
         self._attr_native_min_value = MIN_HUMIDITY

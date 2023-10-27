@@ -15,6 +15,7 @@ from .const import (
     DOMAIN,
     SERVICE_UPDATE_DEVS,
     VS_BINARY_SENSORS,
+    VS_BUTTON,
     VS_DISCOVERY,
     VS_FANS,
     VS_HUMIDIFIERS,
@@ -33,6 +34,7 @@ PLATFORMS = {
     Platform.HUMIDIFIER: VS_HUMIDIFIERS,
     Platform.NUMBER: VS_NUMBERS,
     Platform.BINARY_SENSOR: VS_BINARY_SENSORS,
+    Platform.BUTTON: VS_BUTTON,
 }
 
 _LOGGER = logging.getLogger(__name__)

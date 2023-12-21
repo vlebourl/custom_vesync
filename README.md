@@ -1,7 +1,12 @@
 
 # **Important message**
 > 
-> Unfortunately, I no longer have time to maintain this repo. I am therefore looking for someone to take it over before archiving it. If interested please contact me.
+> Unfortunately, I no longer have time to maintain this repo.
+> @micahqcade was kind enough to offer to take over. His fork is now the reference you should install and update from!
+> Cheers to you all.
+>
+> https://github.com/micahqcade/custom_vesync
+> 
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 [![GitHub release](https://img.shields.io/github/v/release/vlebourl/custom_vesync.svg)](https://GitHub.com/vlebourl/custom_vesync/releases/)
